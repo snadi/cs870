@@ -24,11 +24,12 @@ if(strcmpi(shape, 'circle'))
     phi0 = shapeCone(0.15, [0.5 0.5], grid);
     calculateError = true;
 elseif(strcmpi(shape, 'dumbbell'))
+    plotStep = 0.025;
     grid = constructGrid(m);
     circle1 = shapeCone(0.15, [0.25 0.5], grid);
     circle2 = shapeCone(0.15, [0.75 0.5], grid);
-    rectangle = shapeRectangle(grid);
-    phi0 = shapeUnion(circle1, shapeUnion(circle2, rectangle));
+    rectangle = shapeRectangle(grid, [0.25 0.4], [0.75 0.6]);
+    phi0 = shapeUnion(circle1, rectangle, circle2);
 else
     error('??? Error. Unknown shape.');
 end

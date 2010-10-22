@@ -2,25 +2,30 @@
 % a rectangle.
 % 
 % Output parameters:
-%   initialPhi = the (m+2)x(m+2) matrix that holds the initial values for phi.
+%   initialPhi = mxm matrix that holds the initial values for phi.
 % 
 % Input parameters:
-%   m = the number of cells in the grid.
+%   grid = the grid that will be used for approximation.
+%   lowerLeftCorner = [x y] for the lower left corner of the rectangle.
+%   upperRightCorner = [x y] for the upper right corner of the rectangle.
 
-function initialPhi = shapeRectangle(m)
+function initialPhi = shapeRectangle(grid, lowerLeftCorner, upperRightCorner)
 
-% Given an mxm grid we should get (m+1)x(m+1) matrix for phi. Since Matlab is 
-% 1-based, we'll create an (m+2)x(m+2) matrix for phi.
-initialPhi = ones(m, m);
-
-
+% A rectangle can be thought of as the intersection of 4 planes.
+% Plane 1 = is the plane along the x-axis and right until the upper right corner
+% of the rectangle.
 %
-% Note: (i-1) and (j-1) are used instead of (i) and (j) respectively. This
-% is to count for the fact that Matlab is 1-based. So instead of having the
-% domain from (1) to (m+2), we want it to be (0) to (m+1) (given that omega
-% is defines as (0,1)x(0,1).
-for i = 1 : m
-    for j = 1 : m
-        initialPhi(i, j) = ;
-    end
-end
+% Plane 2 = is the plane starting from the lower left corner of the
+% rectangle and to the right along the x-axis.
+%
+% Plane 3 = is the plane along the y-axis and up until the upper right corner of
+% the rectangle.
+%
+% Plane 4 = is the plane starting from the lower left corner of the
+% rectangle and up along the y-axis.
+plane1 = grid.axes{1} - upperRightCorner(1);
+plane2 = lowerLeftCorner(1) - grid.axes{1};
+plane3 = grid.axes{2} - upperRightCorner(2);
+plane4 = lowerLeftCorner(2) - grid.axes{2};
+
+initialPhi = shapeIntersection(plane1, plane2, plane3, plane4);
