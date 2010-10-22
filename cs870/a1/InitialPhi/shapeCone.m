@@ -14,9 +14,4 @@ function phi = shapeCone(radius, center, grid)
 % Since we're allowed to analytically initialize phi, we can use the equation 
 % given in class to fill out the matrix.
 % General formula => phi = sqrt((x - centerX)^2 + (y - centerY)^2) - radius
-%
-% phi = (grid.axes{1} - center(1)).^2;
-% phi = phi + (grid.axes{2} - center(2)).^2;
-% phi = sqrt(phi) - radius;
-
 phi = sqrt( (grid.axes{1} - center(1)).^2 + (grid.axes{2} - center(2)).^2 ) - radius;
