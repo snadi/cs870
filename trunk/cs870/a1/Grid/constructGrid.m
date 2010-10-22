@@ -5,14 +5,6 @@
 %   grid = the output grid with all its populated fields
 %
 % Input parameters:
-%   lowerLeftCorner = the lower left corner of the grid, i.e. a vector of
-%   values representing where the domain of omega starts. That would be (0,0) 
-%   for the purpose of this assignment.
-%
-%   upperRightCorner = the upper right corner of the grid, i.e. a vector of
-%   values representing where the domain of omega ends. That would be (1,1) 
-%   for the purpose of this assignment.
-%
 %   m = the size of the matrix of phi what will be contained in the grid.
 
 

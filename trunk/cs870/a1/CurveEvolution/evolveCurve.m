@@ -7,18 +7,22 @@
 %   t0 = initial time
 %   tMax = final time
 %   m = matrix size
-function [phi grid phi0] = evolveCurve(shape, lowerLeftCorner, rightUpperCorner, speed, tMax, m)
+function [phi grid phi0] = evolveCurve(shape, speed, tMax, m)
 
 %---------------------------------------------------------------------------
 % Initialize evolution parameters
 plotStep = 0.05;             % plot at t = 0, 0.05, 0.1, 0.15, 0.2, and 0.25
 t0 = 0;                      % Start at time t = 0
 
+% Don't calculate the error by default
+calculateError = false;
+
 %---------------------------------------------------------------------------
 % Determine which curve to evolve
 if(strcmpi(shape, 'circle'))
     grid = constructGrid(m);
     phi0 = shapeCone(0.15, [0.5 0.5], grid);
+    calculateError = true;
 elseif(strcmpi(shape, 'dumbbell'))
     grid = constructGrid(m);
     circle1 = shapeCone(0.15, [0.25 0.5], grid);
@@ -29,17 +33,40 @@ else
     error('??? Error. Unknown shape.');
 end
 
+% Initialize phi with phi0
 phi = phi0;
-
 
 %---------------------------------------------------------------------------
 % Evolve the curve
 t = t0;
-deltaT = (rightUpperCorner(1) - lowerLeftCorner(1)) / m;
+deltaT = (grid.upperRightCorner(1) - grid.lowerLeftCorner(1)) / m;
 
-while(t <= tMax)
-    contour(grid.axes{1}, grid.axes{2}, phi, [0 0], 'b');
-    hold on;
-    phi = finiteDifference(phi, speed, deltaT);
+% There's a little round off here, because while testing the code for m =
+% 80, the sixth plot was not shown. Therefore, I guessed if I increased the
+% terminating condition of the loop, maybe it will be able to plot it. And
+% it did!
+while(t <= tMax + 100 * eps)
+    % plot at t = 0, 0.05, 0.1, 0.15, 0.2, and 0.25
+    if(mod(t, plotStep) == 0)
+        contour(grid.axes{1}, grid.axes{2}, phi, [0 0], 'b');
+        % Draw on the same plot
+        hold on;
+    end
+    phi = finiteDifference(phi, speed, deltaT, grid);
     t = t + deltaT;
+end
+
+% Release the hold on the plot
+hold off;
+
+if(calculateError)
+    % The exact area of the circle if we calculate it analytically
+    % Since F = 1, this means at any given time t, the radius should increase by
+    % (tMax - t0) to keep the ratio dx/dt = 1 (i.e. F = 1).
+    exactArea = pi * (0.15 + tMax - t0)^2;
+
+    % The area calcualted using the final phi
+    phiArea = dblquad(@(x,y) heaviside(-1*(phi(ceil(x*(m-1)) + 1, ceil(y*(m-1)) + 1))), grid.lowerLeftCorner(1) , grid.upperRightCorner(1), grid.lowerLeftCorner(2), grid.upperRightCorner(2));
+
+    fprintf('%g - %g = %g\n', exactArea, phiArea, exactArea - phiArea);
 end
