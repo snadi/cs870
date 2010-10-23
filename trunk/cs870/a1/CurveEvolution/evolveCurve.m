@@ -28,7 +28,7 @@ elseif(strcmpi(shape, 'dumbbell'))
     grid = constructGrid(m);
     circle1 = shapeCone(0.15, [0.25 0.5], grid);
     circle2 = shapeCone(0.15, [0.75 0.5], grid);
-    rectangle = shapeRectangle(grid, [0.25 0.4], [0.75 0.6]);
+    rectangle = shapeRectangle(grid, [0.25 0.45], [0.75 0.55]);
     phi0 = shapeUnion(circle1, rectangle, circle2);
 else
     error('??? Error. Unknown shape.');
