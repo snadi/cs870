@@ -68,6 +68,8 @@ if(calculateError)
 
     % The area calcualted using the final phi
     phiArea = dblquad(@(x,y) heaviside(-1*(phi(ceil(x*(m-1)) + 1, ceil(y*(m-1)) + 1))), grid.lowerLeftCorner(1) , grid.upperRightCorner(1), grid.lowerLeftCorner(2), grid.upperRightCorner(2));
+    phiAreaB = dblquad(@(x,y) 1 - heaviside((phi(ceil(x*(m-1)) + 1, ceil(y*(m-1)) + 1))), grid.lowerLeftCorner(1) , grid.upperRightCorner(1), grid.lowerLeftCorner(2), grid.upperRightCorner(2));
 
     fprintf('%g - %g = %g\n', exactArea, phiArea, exactArea - phiArea);
+    fprintf('%g - %g = %g\n', exactArea, phiAreaB, exactArea - phiAreaB);
 end
