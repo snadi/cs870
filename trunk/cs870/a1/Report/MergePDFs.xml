@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pdfsam_saved_jobs version="1.1.4" savedate="25-Oct-2010">
+  <plugin class="org.pdfsam.guiclient.gui.panels.JInfoPanel" name="About"/>
+  <plugin class="org.pdfsam.plugin.split.GUI.SplitMainGUI" name="Split">
+    <source/>
+    <split_option/>
+    <npages value=""/>
+    <thispage value=""/>
+    <splitsize value=""/>
+    <bookmarkslevel/>
+    <destination value=""/>
+    <prefix value="pdfsam_"/>
+    <overwrite value="true"/>
+    <compressed value="true"/>
+    <pdfversion value="5"/>
+  </plugin>
+  <plugin class="org.pdfsam.guiclient.gui.panels.JSettingsPanel" name="Settings"/>
+  <plugin class="org.pdfsam.plugin.merge.GUI.MergeMainGUI" name="Merge/Extract">
+    <filelist>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/Report.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/constructGrid.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/shapeCone.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/shapeRectangle.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/shapeIntersection.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/shapeUnion.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/evolveCurve.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/finiteDifference.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/DxMinus.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/DxPlus.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/DyMinus.pdf" pageselection="All"/>
+      <file name="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/code/pdf/DyPlus.pdf" pageselection="All"/>
+    </filelist>
+    <destination value="/home/karim/Academic/Courses/Fall 2010/CS870 - Numerical Analysis/cs870-svn/a1/Report/FullReport.pdf"/>
+    <overwrite value="true"/>
+    <merge_type value="false"/>
+    <compressed value="true"/>
+    <pdfversion value="5"/>
+  </plugin>
+</pdfsam_saved_jobs>
