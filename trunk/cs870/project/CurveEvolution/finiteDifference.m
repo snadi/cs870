@@ -6,25 +6,37 @@
 %
 % Input parameters:
 %   phi = phi_n
-%   speed = constant speed
+%   image = the original image
 %   deltaT = time step
 %   grid = the grid used for approximation
+%   lambda = weights for inside and outside energy
+%   mu = weight for length of the curve
+%   nu = weight for area of the curve
 
-function resultingPhi = finiteDifference(phi, speed, deltaT, grid)
+function resultingPhi = finiteDifference(phi, image, deltaT, grid, lambda, mu, nu)
 
-% Calculate gplus only if speed > 0, gminus only if speed < 0. Both are
-% zero otherwise.
-if(speed > 0)
-    gplus = (max(DxMinus(phi, grid), 0).^2 + min(DxPlus(phi, grid), 0).^2 + ...
-            max(DyMinus(phi, grid), 0).^2 + min(DyPlus(phi, grid), 0).^2).^0.5;
-    gminus = 0;    
-elseif(speed < 0)
-    gplus = 0;
-    gminus = (max(DxPlus(phi, grid), 0).^2 + min(DxMinus(phi, grid), 0).^2 + ...
-             max(DyPlus(phi, grid), 0).^2 + min(DyMinus(phi, grid), 0).^2).^0.5;
-else
-    gplus = 0;
-    gminus = 0;
-end
+%gradPhi = gradient(phi);
+c1 = mean(image(phi>=0));
+c2 = mean(image(phi<0));
 
-resultingPhi = phi - deltaT * (max(speed, 0) * gplus + min(speed, 0) * gminus);
+% c1 = dblquad(@(x,y) image * heaviside(phi(x,y)), ... 
+%             grid.lowerLeftCorner(1), grid.upperRightCorner(1), ... 
+%             grid.lowerLeftCorner(2), grid.upperRightCorner(2)) / ...
+%      dblquad(@(x,y) heaviside(phi(x,y)), ...
+%             grid.lowerLeftCorner(1), grid.upperRightCorner(1), ... 
+%             grid.lowerLeftCorner(2), grid.upperRightCorner(2));
+% 
+% c2 = dblquad(@(x,y) image * (1 - heaviside(phi(x,y))), ... 
+%             grid.lowerLeftCorner(1), grid.upperRightCorner(1), ... 
+%             grid.lowerLeftCorner(2), grid.upperRightCorner(2)) / ...
+%      dblquad(@(x,y) (1 - heaviside(phi(x,y))), ...
+%             grid.lowerLeftCorner(1), grid.upperRightCorner(1), ... 
+%             grid.lowerLeftCorner(2), grid.upperRightCorner(2));
+% mu * divergence(gradPhi/norm(gradPhi))
+a = dirac(phi);
+b = (image - c2).^2 - (image - c1).^2;
+b = double(b);
+
+phi_t = b;
+
+resultingPhi = phi + phi_t*deltaT;
