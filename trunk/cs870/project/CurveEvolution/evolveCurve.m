@@ -17,9 +17,12 @@ t0 = 0;                      % Start at time t = 0
 image = rgb2gray(imread('brain.jpg'));
 
 grid = constructGrid(m);
-
+display(size(image,1));
 phi0 = ones(size(image, 1), size(image, 2)) * -1;
 phi0(40:80, 40:80) = 1;
+
+%phi0 = bwdist(phi0)-bwdist(1-phi0)+im2double(phi0)-.5; %produces slightly
+%diff results but not sure of intuition behind it
 
 % Initialize phi with phi0
 phi = phi0;
@@ -48,8 +51,9 @@ for n=1:iterations
 end
 
 %display final contour
-subplot(2,2,4); contour(phi, [0 0], 'r', 'LineWidth', 1); title('Global Region-Based Segmentation');
-display(phi);
+seg = phi>0;
+display(seg);
+subplot(2,2,4); imshow(seg); title('Global Region-Based Segmentation');
 
 
 % Release the hold on the plot

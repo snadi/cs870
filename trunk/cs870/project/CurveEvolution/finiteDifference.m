@@ -19,11 +19,13 @@ gradPhi = gradient(phi);
 c1 = mean(image(phi>=0));
 c2 = mean(image(phi<0));
 
-a = mydirac(phi);
-a(131,131) = 0;
+
+%a = mydirac(phi);
+%a(131,131) = 0;
 b = (image - c2).^2 - (image - c1).^2;
 b = double(b);
 
 phi_t = b;
 
 resultingPhi = phi + phi_t*deltaT;
+
