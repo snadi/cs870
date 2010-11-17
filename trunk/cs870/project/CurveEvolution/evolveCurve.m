@@ -14,7 +14,7 @@ function [phi grid phi0] = evolveCurve(iterations, m)
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image = rgb2gray(imread('brain.jpg'));
+image = rgb2gray(imread('flowers.jpg'));
 
 grid = constructGrid(m);
 display(size(image,1));
