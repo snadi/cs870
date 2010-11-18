@@ -7,7 +7,7 @@
 %   t0 = initial time
 %   tMax = final time
 %   m = matrix size
-function [phi grid phi0] = evolveCurve(iterations)
+function [phi grid phi0] = evolveCurve(iterations, k)
 
 %---------------------------------------------------------------------------
 % Initialize evolution parameters
@@ -50,7 +50,7 @@ for n=1:iterations
         seg = phi>0;
         subplot(2,2,4); imshow(seg);              
     end
-    phi= finiteDifference(phi, image, deltaT, grid, [1 1], 0.1, 0);   
+    phi= finiteDifference(phi, image, deltaT, grid, [1 1], 0.1, 0, k);   
     
     t = t + deltaT;    
 end
