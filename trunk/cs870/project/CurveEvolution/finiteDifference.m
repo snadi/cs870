@@ -19,11 +19,12 @@ function resultingPhi = finiteDifference(phi, image, deltaT, grid, lambda, mu, n
 c1 = mean(image(phi>=0));
 c2 = mean(image(phi<0));
 
-display(phi);
-a = mydirac(phi);
-a(size(a,1) + 1,size(a,1) + 1) = 0;
-display(a);
-pause;
+%display(phi);
+%a = mydirac(phi);
+%a(size(a,1) + 1,size(a,1) + 1) = 0;
+%display(a);
+%pause;
+a = 1;
 b = (image - c2).^2 - (image - c1).^2;
 b = double(b);
 
