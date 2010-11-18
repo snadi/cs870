@@ -20,12 +20,12 @@ grid = constructGrid(size(image,1));
 phi0 = zeros(size(image, 1), size(image, 2));
 phi0(10:15, 10:15) = 1;
 
+phi0 = bwdist(phi0)-bwdist(1-phi0)+im2double(phi0)-.5; %produces slightly
+%diff results but not sure of intuition behind it
+
 figure();
 subplot(2,2,1); imshow(image); title('Input Image');
 subplot(2,2,2); contour(flipud(phi0), [0 0], 'r','LineWidth',1); title('initial contour');
-
-phi0 = bwdist(phi0)-bwdist(1-phi0)+im2double(phi0)-.5; %produces slightly
-%diff results but not sure of intuition behind it
 
 
 % Initialize phi with phi0
