@@ -13,7 +13,7 @@
 %   mu = weight for length of the curve
 %   nu = weight for area of the curve
 
-function resultingPhi = finiteDifference(phi, image, deltaT, grid, lambda, mu, nu)
+function resultingPhi = finiteDifference(phi, image, deltaT, grid, lambda, mu, nu, k)
 
 %gradPhi = mygrad(phi);
 c1 = mean(image(phi>=0));
@@ -27,9 +27,23 @@ pause;
 b = (image - c2).^2 - (image - c1).^2;
 b = double(b);
 
+switch lower(k)
+    case 'none'
+        ic = 0;
+    case 'kappa'
+        ic = kappa(phi);
+    case 'mykappa'
+        ic = mykappa(phi);
+    case 'kappagrad'
+        ic = kappagrad(phi);
+    case 'curvature'
+        ic = curvature(phi, 1, 1);
+end
+
 %phi_t = mu*divergence(gradPhi,abs(gradPhi)) + b;
 %phi_t =gradPhi*(mu*kappa(phi)./max(max(abs(kappa(phi)))) + b);
 %phi_t = mu*kappa(phi)./max(max(abs(kappa(phi))))+b; % copied
-phi_t =  a*(mu*kappa(phi) + b);
+
+phi_t =  a*(mu*ic + b);
 resultingPhi = phi + phi_t*deltaT;
 
