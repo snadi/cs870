@@ -27,23 +27,21 @@ c2 = mean(image(phi<0));
 a = 1;
 b = (image - c2).^2 - (image - c1).^2;
 b = double(b);
+ic = trialKappa(phi);
 
-switch lower(k)
-    case 'none'
-        ic = 0;
-    case 'kappa'
-        ic = kappa(phi);
-    case 'mykappa'
-        ic = mykappa(phi);
-    case 'kappagrad'
-        ic = kappagrad(phi);
-    case 'curvature'
-        ic = curvature(phi, 1, 1);
-end
+% switch lower(k)
+%     case 'none'
+%         ic = 0;
+%     case 'kappa'
+%         ic = kappa(phi);
+%     case 'mykappa'
+%         ic = mykappa(phi);
+%     case 'kappagrad'
+%         ic = kappagrad(phi);
+%     case 'curvature'
+%         ic = curvature(phi, 1, 1); % very bad ! has holes in the middle!
+% end
 
-%phi_t = mu*divergence(gradPhi,abs(gradPhi)) + b;
-%phi_t =gradPhi*(mu*kappa(phi)./max(max(abs(kappa(phi)))) + b);
-%phi_t = mu*kappa(phi)./max(max(abs(kappa(phi))))+b; % copied
 
 phi_t =  a*(mu*ic + b);
 resultingPhi = phi + phi_t*deltaT;
