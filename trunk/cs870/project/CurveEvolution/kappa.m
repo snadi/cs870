@@ -27,7 +27,7 @@ K = (fxx.*fy.^2 - 2*fxy.*fx.*fy + fyy.*fx.^2)./((fx.^2 + fy.^2 + eps).^(1.5));
 
 KG = K.*G;
 
-% why ?
+% why ? boundary condition ?
 KG(1,:) = eps;
 KG(end,:) = eps;
 KG(:,1) = eps;

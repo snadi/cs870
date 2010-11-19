@@ -1,4 +1,4 @@
-function K = kappa(I)  
+function K = kappagrad(I)  
 
 I = double(I);
 g = gradient(I); g = g ./ norm(g);

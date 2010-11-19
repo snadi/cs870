@@ -1,4 +1,4 @@
-function K = kappa(I)
+function K = mykappa(I)
 % get curvature information of input image
 % input: 2D image I
 % output: curvature matrix KG
