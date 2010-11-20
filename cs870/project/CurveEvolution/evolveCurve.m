@@ -17,14 +17,15 @@ t0 = 0;                      % Start at time t = 0
 image = rgb2gray(imread('brain.jpg'));
 
 grid = constructGrid(size(image,1));
-phi0 = ones(size(image, 1), size(image, 2)) * -1;
+phi0 =  ones(size(image, 1), size(image, 2)) * -1 ;%cone(10, [60 60], 131);
+
 phi0(40:80, 40:80) = 1;
 
 figure();
 subplot(2,2,1); imshow(image); title('Input Image');
-subplot(2,2,2); contour(flipud(phi0), [0 0], 'r','LineWidth',1); title('initial contour');
+subplot(2,2,2); contour(phi0, [0 0], 'r','LineWidth',1); title('initial contour');
 
-phi0 = bwdist(phi0)-bwdist(1-phi0)+im2double(phi0)-.5; %produces slightly
+%phi0 = bwdist(phi0)-bwdist(1-phi0)+im2double(phi0)-.5; %produces slightly
 %diff results but not sure of intuition behind it. However, if not used
 %then curve doesn't work if it is not inside the object
 
@@ -36,7 +37,7 @@ phi = phi0;
 %---------------------------------------------------------------------------
 % Evolve the curve
 t = t0;
-deltaT = (grid.upperRightCorner(1) - grid.lowerLeftCorner(1)) / grid.gridSize;
+deltaT = 0.0001;% (grid.upperRightCorner(1) - grid.lowerLeftCorner(1)) / grid.gridSize;
 
 
 
