@@ -13,40 +13,31 @@
 %   mu = weight for length of the curve
 %   nu = weight for area of the curve
 
-function resultingPhi = finiteDifference(phi, image, deltaT, grid, lambda, mu, nu, k)
-display(phi);
-display(image);
-%gradPhi = mygrad(phi);
+function resultingPhi = finiteDifference(phi, image, deltaT, mu, nu)
+
+%c1: average inside curve
+%c2: average outside curve
 c1 = mean(image(phi>=0));
 c2 = mean(image(phi<0));
 
+%we used |gradient(phi)| instead of the delta dirac function. This was an
+%option stated in the paper
+a = norm(gradient(phi));
 
-%display(phi);
-a = norm(gradient(phi));%mydirac(phi);
-
-%pause;
-%a = 1;
+%difference of intensities outside - difference of intensities inside
+%lamda1 & lamda2 are always set to be equal to one so we ignore them in our
+%solution
 b = (image - c2).^2 - (image - c1).^2;
 
+%convert difference to double
 b = double(b);
 
-ic = kappa(phi);
+%calculating the curvature term in the PDE
+curvature = kappa(phi);
 
+%calculation phi_t according to the PDE in the paper.
+phi_t =  a*(mu*curvature - nu + b);
 
-% switch lower(k)
-%     case 'none'
-%         ic = 0;
-%     case 'kappa'
-%         ic = kappa(phi);
-%     case 'mykappa'
-%         ic = mykappa(phi);
-%     case 'kappagrad'
-%         ic = kappagrad(phi);
-%     case 'curvature'
-%         ic = curvature(phi, 1, 1); % very bad ! has holes in the middle!
-% end
-
-
-phi_t =  a*(mu*ic + b);
+%calculating the new phi after deltaT
 resultingPhi = phi + phi_t*deltaT;
 

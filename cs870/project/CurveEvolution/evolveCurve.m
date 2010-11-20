@@ -53,7 +53,7 @@ for n=1:iterations
         seg = phi>0;
         subplot(2,2,4); imshow(seg);              
     end
-    phi= finiteDifference(phi, image, deltaT, grid, [1 1], 0.1, 0, k);   
+    phi= finiteDifference(phi, image, deltaT, 0.1, 0);   
     
     t = t + deltaT;    
 end
