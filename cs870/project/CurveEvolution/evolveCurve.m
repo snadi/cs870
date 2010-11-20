@@ -7,29 +7,24 @@
 %   t0 = initial time
 %   tMax = final time
 %   m = matrix size
-function [phi grid phi0] = evolveCurve(iterations, k)
+function [phi grid phi0] = evolveCurve(iterations)
 
 %---------------------------------------------------------------------------
 % Initialize evolution parameters
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image = rgb2gray(imread('brain.jpg'));
+image = rgb2gray(imread('flowers.jpg'));
+
 
 grid = constructGrid(size(image,1));
-phi0 =  ones(size(image, 1), size(image, 2)) * -1 ;%cone(10, [60 60], 131);
-
-phi0(40:80, 40:80) = 1;
+phi0 =  cone(10, [40 40], 131);
 
 figure();
 subplot(2,2,1); imshow(image); title('Input Image');
-subplot(2,2,2); contour(phi0, [0 0], 'r','LineWidth',1); title('initial contour');
+subplot(2,2,2); contour(flipud(phi0), [0 0], 'r','LineWidth',1); title('initial contour');
 
-%phi0 = bwdist(phi0)-bwdist(1-phi0)+im2double(phi0)-.5; %produces slightly
-%diff results but not sure of intuition behind it. However, if not used
-%then curve doesn't work if it is not inside the object
-
-
+image = double(image);
 
 % Initialize phi with phi0
 phi = phi0;
@@ -53,14 +48,15 @@ for n=1:iterations
         seg = phi>0;
         subplot(2,2,4); imshow(seg);              
     end
-    phi= finiteDifference(phi, image, deltaT, 0.1, 0);   
+    phi_new = finiteDifference(phi, image, deltaT, 0.1, 0);  
     
+    phi = phi_new;
     t = t + deltaT;    
 end
 
 %display final contour
 seg = phi>0;
-subplot(2,2,4); imshow(seg); title('Global Region-Based Segmentation');
+subplot(2,2,4); imshow(seg); title('Final Segmentation');
 
 
 % Release the hold on the plot
