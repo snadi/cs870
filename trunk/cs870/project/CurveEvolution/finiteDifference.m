@@ -14,20 +14,24 @@
 %   nu = weight for area of the curve
 
 function resultingPhi = finiteDifference(phi, image, deltaT, grid, lambda, mu, nu, k)
-
+display(phi);
+display(image);
 %gradPhi = mygrad(phi);
 c1 = mean(image(phi>=0));
 c2 = mean(image(phi<0));
 
+
 %display(phi);
-%a = mydirac(phi);
-%a(size(a,1) + 1,size(a,1) + 1) = 0;
-%display(a);
+a = norm(gradient(phi));%mydirac(phi);
+
 %pause;
-a = 1;
+%a = 1;
 b = (image - c2).^2 - (image - c1).^2;
+
 b = double(b);
-ic = trialKappa(phi);
+
+ic = kappa(phi);
+
 
 % switch lower(k)
 %     case 'none'
