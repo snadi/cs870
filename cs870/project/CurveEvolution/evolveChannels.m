@@ -3,13 +3,13 @@ function evolveChannels(iterations)
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image2 = rgb2gray(imread('donuttopright.jpg'));
-image1 = rgb2gray(imread('donutbottomleft.jpg'));
-objective = rgb2gray(imread('donut.jpg'));
+image2 = rgb2gray(imread('brain1.jpg'));
+image1 = rgb2gray(imread('brain3.jpg'));
+objective = rgb2gray(imread('brain.jpg'));
 
 
 grid = constructGrid(size(image1,1));
-phi0 =  cone(40, [80 80], 300);
+phi0 =  cone(20, [50 50], 131);
 
 figure();
 subplot(2,3,1); imshow(image1); title('Input Image 1');
@@ -35,7 +35,7 @@ for n=1:iterations
         hold on;
         contour(phi, [0 0], 'r','LineWidth',1);      title(strcat('iteration: ',num2str(n)));
         drawnow;
-        seg = phi>0;
+        seg = phi>=0;
         subplot(2,3,5); imshow(seg); title('Segmentation');             
     end
     lambda = (max(max(image1)))^2;
