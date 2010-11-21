@@ -2,9 +2,10 @@ function output = scintersection(A1, A2, phi, region)
 
 switch region
     case 'inside'
-        output = 1 - ((1-z
+        output = 1 - ((1 - zin(A1, phi)).*(1-zin(A2,phi))).^0.5;
+        display(outpu
     case 'outside'
-        output = (A1(phi<0).*A2(phi<0)).^0.5;
+        output = 1 - ((1 - zout(A1, phi)).*(1-zout(A2,phi))).^0.5;
 end
 
 end

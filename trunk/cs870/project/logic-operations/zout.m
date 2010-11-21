@@ -2,7 +2,7 @@ function output = zout(image, phi)
 
 outside = mean(image(phi < 0));
 
-numerator = double(abs(image - outside).^2);
+numerator = double((image - outside).^2);
 
 denomenator = max(max((image)));
 
