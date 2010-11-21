@@ -1,16 +1,11 @@
 function output = scunion(A1, A2, phi, region)
 
-display(size(A1));
-display(size(A2));
-display(size(phi));
 
 switch(region)
-    case 'inside'
-        display(size(1 - A1(phi >0)));
-        display(size(1 - A2(phi > 0)))
-        output = 1 - ((1-A1(phi > 0)).*(1-A2(phi > 0))).^0.5;
+    case 'inside'                
+        output =  ( zin(A1,phi).*zin(A2,phi) ).^0.5;           
     case 'outside'
-        output = 1 - ((1-A1(phi < 0)).*(1-A2(phi < 0))).^0.5;
+        output =  ( zout(A1,phi).*zout(A2,phi) ).^0.5;        
 end
 
 end

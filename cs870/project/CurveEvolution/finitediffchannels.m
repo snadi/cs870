@@ -7,7 +7,10 @@ a = norm(gradient(phi));
 %calculating the curvature term in the PDE
 curvature = kappa(phi);
 
-phi_t = a*(mu*curvature -lambda*(fin(A1,A2,phi,logicop) + fout(A1,A2,phi,logicop)));
+force1 = double(fin(A1,A2,phi,logicop));
+force2 = double(fout(A1,A2,phi,logicop));
+
+phi_t =  a*(mu*curvature -lambda*(force1 + force2));
 
 resultingPhi = phi + deltaT*phi_t;
 
