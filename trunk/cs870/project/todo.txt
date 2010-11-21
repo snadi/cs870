@@ -1,0 +1,2 @@
+stopping condition for chan vese
+testing more images on chan vese (making sure location of curve does not matter in all these images)
