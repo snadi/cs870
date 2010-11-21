@@ -1,0 +1,11 @@
+function output = scintersection(A1, A2, phi, region)
+
+switch region
+    case 'inside'
+        output = 1 - ((1-z
+    case 'outside'
+        output = (A1(phi<0).*A2(phi<0)).^0.5;
+end
+
+end
+
