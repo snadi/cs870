@@ -10,8 +10,5 @@ switch logicop
         output = scintersection(A1,A2,phi,'inside');
 end
 
-display('fin');
-display(size(output));
-
 end
 

@@ -7,8 +7,5 @@ switch region
         output = 1 - ((1 - zout(A1, phi)).*(1-zout(A2,phi))).^0.5;
 end
 
-display('scintersection');
-display(size(output));
-
 end
 

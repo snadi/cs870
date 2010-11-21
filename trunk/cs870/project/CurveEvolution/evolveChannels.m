@@ -3,12 +3,12 @@ function evolveChannels(iterations)
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image1 = rgb2gray(imread('donuttopright.jpg'));
-image2 = rgb2gray(imread('donutbottomleft.jpg'));
+image2 = rgb2gray(imread('donuttopright.jpg'));
+image1 = rgb2gray(imread('donutbottomleft.jpg'));
 
 
 grid = constructGrid(size(image1,1));
-phi0 =  cone(50, [80 80], 300);
+phi0 =  cone(80, [100 100], 300);
 
 figure();
 subplot(3,2,1); imshow(image1); title('Input Image 1');
@@ -24,7 +24,7 @@ phi = phi0;
 %---------------------------------------------------------------------------
 % Evolve the curve
 t = t0;
-deltaT = 0.01;% (grid.upperRightCorner(1) - grid.lowerLeftCorner(1)) / grid.gridSize;
+deltaT = 0.001;% (grid.upperRightCorner(1) - grid.lowerLeftCorner(1)) / grid.gridSize;
 
 
 subplot(3,2,4); title('Segmentation');
@@ -39,7 +39,8 @@ for n=1:iterations
         seg = phi>0;
         subplot(3,2,5); imshow(seg);              
     end
-    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.1, 1, 'union');
+    lambda = (max(max(image1)))^2;
+    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda, 'union');
     
     phi = phi_new;
     t = t + deltaT;    
