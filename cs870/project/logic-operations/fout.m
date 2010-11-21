@@ -7,12 +7,8 @@ switch logicop
     case 'union'
         output = scintersection(A1,A2,phi,'outside');
     case 'intersection'
-        output = scunion(A1,A2,phi,'outside');
-        display(size(output));
+        output = scunion(A1,A2,phi,'outside');        
 end
-
-display('fout');
-display(size(output));
 
 end
 
