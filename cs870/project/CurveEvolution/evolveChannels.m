@@ -41,7 +41,8 @@ for n=1:iterations
         subplot(2,3,5); imshow(seg); title('Segmentation');             
     end
     lambda = 100;
-    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda, 'intersection');
+    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda, 'union');
+    phi_new = reinit(phi_new);
     
     phi = phi_new;
     t = t + deltaT;      
