@@ -14,11 +14,11 @@ function [phi grid phi0] = evolveCurve(iterations)
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image = rgb2gray(imread('data/brain.jpg'));
+image = rgb2gray(imread('data/donut.jpg'));
 
 
 grid = constructGrid(size(image,1));
-phi0 =  cone(20, [50 50], 131);
+phi0 =  cone(20, [50 50], 300);
 
 figure();
 subplot(2,2,1); imshow(image); title('Input Image');
