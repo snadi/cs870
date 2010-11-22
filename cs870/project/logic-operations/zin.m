@@ -1,8 +1,8 @@
 function output = zin(image, phi)
 
-inside = mean(image(phi > 0));
+cin = mean(image(phi > 0));
 
-numerator = double((image - inside).^2);
+numerator = double(image - cin).^2;
 
 denomenator = max(max(image));
 
