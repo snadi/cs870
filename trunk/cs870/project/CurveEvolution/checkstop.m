@@ -1,9 +1,8 @@
 function indicator = checkstop(old, new, error)
 
-difference = abs(new  - old);
+difference = abs(new - old);
 
-av = sum(sum(difference)) / prod(size(difference));
-display(round(av));
+display(max(max(difference)));
 
 erroneousIndices = find(difference > error + eps);
 
