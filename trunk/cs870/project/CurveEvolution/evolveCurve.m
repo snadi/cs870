@@ -1,13 +1,8 @@
 % evolveCurve: evlove the given shape
 %
 % Input parameters:
-%   shape = the shape to be evolved. It can be any value of ('circle',
-%   'dumbbell').
-%   speed = constant speed
-%   t0 = initial time
-%   tMax = final time
-%   m = matrix size
-function [phi grid phi0] = evolveCurve(iterations)
+%   iterations = number of iterations
+function [phi phi0] = evolveCurve(iterations)
 
 %---------------------------------------------------------------------------
 % Initialize evolution parameters
@@ -16,8 +11,6 @@ t0 = 0;                      % Start at time t = 0
 
 image = rgb2gray(imread('data/donut.jpg'));
 
-
-grid = constructGrid(size(image,1));
 phi0 =  cone(20, [50 50], 300);
 
 figure();
@@ -32,7 +25,7 @@ phi = phi0;
 %---------------------------------------------------------------------------
 % Evolve the curve
 t = t0;
-deltaT = 0.0001;% (grid.upperRightCorner(1) - grid.lowerLeftCorner(1)) / grid.gridSize;
+deltaT = 0.0001;
 
 
 
@@ -48,7 +41,12 @@ for n=1:iterations
         seg = phi>0;
         subplot(2,2,4); imshow(seg);              
     end
-    phi_new = finiteDifference(phi, image, deltaT, 0.1, 0);  
+    phi_new = finiteDifference(phi, image, deltaT, 0.1, 0);
+    
+    if(checkstop(phi, phi_new, 10^-2))
+        display('break');
+        break;
+    end
     
     phi = phi_new;
     t = t + deltaT;    
