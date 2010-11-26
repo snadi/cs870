@@ -2,11 +2,11 @@ function output = zin(image, phi)
 
 cin = mean(image(phi > 0));
 
-numerator = double(image - cin).^2;
+numerator = (image - cin).^2;%norm(image - cin).^2;
 
 denomenator = max(max(image));
 
-output = numerator/denomenator;
+output = double(numerator)/double(denomenator);
 
 end
 
