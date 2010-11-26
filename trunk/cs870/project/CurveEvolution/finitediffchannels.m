@@ -13,8 +13,8 @@ curvature = kappa(phi);
 force1 = fin(A1, A2, phi, logicop);
 force2 = fout(A1, A2, phi, logicop);
 
-%phi_t =  a*(mu*curvature -lambda*(force1 + force2));
-phi_t = -lambda * (force1 + force2);
+phi_t =  a*(mu*curvature -lambda*(force1 + force2));
+%phi_t = -lambda * (force1 + force2);
 
 resultingPhi = phi + deltaT*phi_t;
 

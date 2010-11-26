@@ -10,7 +10,7 @@ objective = rgb2gray(imread('data/donut.jpg'));
 display('in evolve channels');
 
 
-grid = constructGrid(size(image1,1));
+%grid = constructGrid(size(image1,1));
 phi0 =  cone(50, [80 80], 300);
 
 figure();
@@ -40,7 +40,7 @@ for n=1:iterations
         seg = phi>=0;
         subplot(2,3,5); imshow(seg); title('Segmentation');             
     end
-    lambda = 100;
+    lambda = 255;
     phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda, 'union');
     phi_new = reinit(phi_new);
     
@@ -57,4 +57,3 @@ subplot(2,3,5); imshow(seg); title('Final Segmentation');
 hold off;
 
 end
-
