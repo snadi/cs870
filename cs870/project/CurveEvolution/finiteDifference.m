@@ -29,14 +29,7 @@ a = norm(gradient(phi));
 %lamda1 & lamda2 are always set to be equal to one so we ignore them in our
 %solution
 
-
-b = double((image - c2).^2) - double( (image - c1).^2);
-%b = (image - c2).^2 - (image - c1).^2;
-
-
-%convert difference to double
-b = double(b);
-
+b = double((image - c2).^2) - double((image - c1).^2);
 
 %calculating the curvature term in the PDE
 curvature = kappa(phi);

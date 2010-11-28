@@ -1,14 +1,10 @@
-function indicator = checkstop(old, new, error)
+function indicator = checkstop(old, new)
 
-difference = abs(new - old);
+error = abs( (old - new) ./ old);
+error(~isfinite(error)) = 0;   % Sets Inf and NaN to 0
 
-display(max(max(difference)));
-
-erroneousIndices = find(difference > error + eps);
-
-if (length(erroneousIndices) > 0)
-    indicator = 1;
-end
+display(max(max(error)));
+pause;
 
 indicator = 0;
 

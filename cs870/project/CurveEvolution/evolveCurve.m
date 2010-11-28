@@ -25,9 +25,10 @@ phi = phi0;
 %---------------------------------------------------------------------------
 % Evolve the curve
 t = t0;
-deltaT = 0.0001;
+deltaT = 0.01;
 
-
+% Just a dumb value to initalize the error
+oldError = 5;
 
 subplot(2,2,3); title('Segmentation');
         
@@ -43,10 +44,14 @@ for n=1:iterations
     end
     phi_new = finiteDifference(phi, image, deltaT, 0.1, 0);
     
-    if(checkstop(phi, phi_new, 10^-2))
+    %newError = calculateError(phi, phi_new);
+    
+    if(checkstop(phi, phi_new))
         display('break');
         break;
     end
+    
+    %oldError = newError;
     
     phi = phi_new;
     t = t + deltaT;    
