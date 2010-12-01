@@ -57,7 +57,7 @@ end
 
 %display final contour
 seg = phi>0;
-subplot(2,numOfSubplots,5); imshow(seg); title('Final Segmentation');
+subplot(2,numOfSubplots,5); imshow(seg); title(strcat('Final Segmentation at iteration:' ,num2str(n)));
 
 
 % Release the hold on the plot
