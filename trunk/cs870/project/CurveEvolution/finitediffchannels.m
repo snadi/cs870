@@ -1,4 +1,4 @@
-function resultingPhi = finitediffchannels(A1,A2,phi,deltaT, mu, lambda, logicop)
+function resultingPhi = finitediffchannels(phi,deltaT, mu, lambda, logicop, varargin)
 
 %we used |gradient(phi)| instead of the delta dirac function. This was an
 %option stated in the paper
@@ -8,10 +8,12 @@ a = norm(gradient(phi));
 curvature = kappa(phi);
 
 
-%force1 = double(fin(A1,A2,phi,logicop));
-%force2 = double(fout(A1,A2,phi,logicop));
-force1 = fin(A1, A2, phi, logicop);
-force2 = fout(A1, A2, phi, logicop);
+force1 = fin(phi, logicop, varargin{:});
+force2 = fout(phi, logicop, varargin{:});
+
+
+%force1 = fin(A1, A2, phi, logicop);
+%force2 = fout(A1, A2, phi, logicop);
 
 phi_t =  a*(mu*curvature - lambda*(force1 - force2));
 %phi_t = -lambda * (force1 + force2);

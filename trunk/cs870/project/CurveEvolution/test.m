@@ -3,8 +3,10 @@ function test(iterations)
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image2 = rgb2gray(imread('data/donutbottomleft.jpg'));
 image1 = rgb2gray(imread('data/donuttopright.jpg'));
+image2 = rgb2gray(imread('data/donutbottomleft.jpg'));
+image3 = rgb2gray(imread('data/donutbottomright.jpg'));
+
 objective = rgb2gray(imread('data/donut.jpg'));
 
 display('in evolve channels');
@@ -21,6 +23,7 @@ subplot(2,numOfSubplots,3); contour(flipud(phi0), [0 0], 'r','LineWidth',1); tit
 
 image1 = double(image1);
 image2 = double(image2);
+image3 = double(image3);
 
 
 % Initialize phi with phi0
@@ -43,7 +46,7 @@ for n=1:iterations
         subplot(2,numOfSubplots,5); imshow(seg); title('Segmentation');            
     end
     lambda = 255*255;
-    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0, lambda,  'union');
+    phi_new = finitediffchannels(phi,deltaT, 0.1, lambda,  'intersection',image1,image2, image3);
     %phi_new = reinit(phi_new);
     
     if(checkstop(image1, phi, phi_new))
