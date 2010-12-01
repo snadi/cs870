@@ -1,43 +1,37 @@
-% finiteDifference: calculate the value of phi_n_plus_1 based on the finite
-% difference method.
+% updatePhi: update phi for the Chan-Vese model
 %
 % Output parameters:
-%   resultingPhi = phi_n_plus_1
+%   resultingPhi = updated phi
 %
 % Input parameters:
-%   phi = phi_n
+%   phi = the current value of phi
 %   image = the original image
 %   deltaT = time step
-%   grid = the grid used for approximation
-%   lambda = weights for inside and outside energy
-%   mu = weight for length of the curve
-%   nu = weight for area of the curve
+%   mu = weight for the length of the curve
+%   nu = weight for the area of the curve
+%   lambda = weight for the inside and outside energies
 
-function resultingPhi = finiteDifference(phi, image, deltaT, mu, nu)
+function resultingPhi = updatePhi(phi, image, deltaT, mu, nu, lambda)
 
-%c1: average inside curve
-%c2: average outside curve
+% cin: average inside curve
+% cout: average outside curve
+cin = mean(image(phi>0));
+cout = mean(image(phi<0));
 
-c1 = mean(image(phi>0));
-c2 = mean(image(phi<0));
+% |gradient(phi)| is used instead of the dirac delta function. This was an
+% option stated in the paper.
+normOfGradient = norm(gradient(phi));
 
-%we used |gradient(phi)| instead of the delta dirac function. This was an
-%option stated in the paper
-a = norm(gradient(phi));
+% Difference of intensities outside - inside
+force = lambda * (double((image - cout).^2) - double((image - cin).^2));
 
-%difference of intensities outside - difference of intensities inside
-%lamda1 & lamda2 are always set to be equal to one so we ignore them in our
-%solution
-
-b = double((image - c2).^2) - double((image - c1).^2);
-
-%calculating the curvature term in the PDE
+% Calculate the curvature term in the PDE
 curvature = kappa(phi);
 
-%calculation phi_t according to the PDE in the paper.
-phi_t =  a*(mu*curvature - nu + b);
+% Calculate phi_t according to the PDE in the paper
+phi_t =  normOfGradient * ( mu * curvature - nu + force);
 
-%calculating the new phi after deltaT
-resultingPhi = phi + phi_t*deltaT;
+% Update phi
+resultingPhi = phi + deltaT * phi_t;
 
 

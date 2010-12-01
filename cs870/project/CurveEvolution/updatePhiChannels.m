@@ -1,24 +1,34 @@
-function resultingPhi = finitediffchannels(phi,deltaT, mu, lambda, logicop, varargin)
+% updatePhiChannels: update phi for multiple channels
+%
+% Output parameters:
+%   resultingPhi = updated phi
+%
+% Input parameters:
+%   phi = the current value of phi
+%   deltaT = the time step
+%   mu = scaling term for the length of the contour
+%   lambda = scaling term for the forces
+%   logicop = the required logical operator
+%   varargin = the number of channels to operate on
 
-%we used |gradient(phi)| instead of the delta dirac function. This was an
-%option stated in the paper
-a = norm(gradient(phi));
+function resultingPhi = updatePhiChannels(phi,deltaT, mu, lambda, ...
+                                            logicop, varargin)
 
-%calculating the curvature term in the PDE
+% |gradient(phi)| is used instead of the dirac delta function. This was an
+% option stated in the paper.
+normOfGradient = norm(gradient(phi));
+
+% Calculate the curvature term in the PDE
 curvature = kappa(phi);
 
+% Calculate the forces
+forceInside = fin(phi, logicop, varargin{:});
+forceOutside = fout(phi, logicop, varargin{:});
 
-force1 = fin(phi, logicop, varargin{:});
-force2 = fout(phi, logicop, varargin{:});
+% Calculate phi_t according to the PDE in the paper
+phi_t =  normOfGradient * ...
+                    ( mu * curvature - lambda * (forceInside - forceOutside) );
 
-
-%force1 = fin(A1, A2, phi, logicop);
-%force2 = fout(A1, A2, phi, logicop);
-
-phi_t =  a*(mu*curvature - lambda*(force1 - force2));
-%phi_t = -lambda * (force1 + force2);
-
-resultingPhi = phi + deltaT*phi_t;
-
-end
+% Update phi
+resultingPhi = phi + deltaT * phi_t;
 

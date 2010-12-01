@@ -1,71 +1,79 @@
-% evolveCurve: evlove the given shape
+% evolveCurve: evlove the curve to get the segmentation
 %
 % Input parameters:
 %   iterations = number of iterations
-function [phi phi0] = evolveCurve(iterations)
+%   image = a grayscale double image
+%   phi0 = the intial contour
+%   mu = weight for the length of the curve
+%   nu = weight for the area of the curve
+%   lambda = weight for the inside and outside energies
+
+function evolveCurve(iterations, image, phi0, mu, nu, lambda)
 
 %---------------------------------------------------------------------------
-% Initialize evolution parameters
-plotStep = 1;               
-t0 = 0;                      % Start at time t = 0
+% Initializing some parameters
 
-image = rgb2gray(imread('data/donuts.jpg'));
-
+% Get the image size
 imageSize = size(image,1);
 
-phi0 =  cone(20, [50 50], imageSize);
-
+% Plot the input image
 figure();
-subplot(2,2,1); imshow(image); title('Input Image');
-subplot(2,2,2); contour(flipud(phi0), [0 0], 'r','LineWidth',1); title('initial contour');
+subplot(2,2,1);
+imshow(image);
+title('Input Image');
 
-image = double(image);
+% Plot the initial contour
+subplot(2,2,2);
+contour(flipud(phi0), [0 0], 'r','LineWidth',1);
+title('Initial Contour');
 
 % Initialize phi with phi0
 phi = phi0;
 
-%---------------------------------------------------------------------------
-% Evolve the curve
-t = t0;
+% deltaT should satisfy the stability condition: deltaT = 1/h^2
 deltaT = (1/(imageSize))^2;
-display(deltaT);
 
-% Just a dummy value to initalize the error
-%oldError = 5;
+% Plot the segmentation title
+subplot(2,2,3);
+title('Segmentation');
 
-subplot(2,2,3); title('Segmentation');
-        
+%---------------------------------------------------------------------------
+% Evolve the curve now!
 for n=1:iterations
-    if(mod(n, plotStep) == 0) 
-        subplot(2,2,3);
-        imshow(image, 'initialmagnification','fit','displayrange',[0 255]);
-        hold on;
-        contour(phi, [0 0], 'r','LineWidth',1);      title(strcat('iteration: ',num2str(n)));
-        drawnow;
-        seg = phi>0;
-        subplot(2,2,4); imshow(seg);              
-    end
-    phi_new = finiteDifference(phi, image, deltaT, 0.1, 0);
+    % Draw the original image
+    subplot(2,2,3);
+    imshow(image, 'initialmagnification','fit','displayrange',[0 255]);
+    hold on;
     
-    %newError = calculateError(phi, phi_new);
+    % Plot the contour on the image
+    contour(phi, [0 0], 'r','LineWidth',1);
+    title(strcat('Iteration: ',num2str(n)));
+    drawnow;
     
-    %phi is from the previous iteration. phi_new is after finite
-    %differencing
-    if(checkstop(image, phi, phi_new))
-        display(strcat('stopped at iteration : ', num2str(n)));
+    % Plot the segmentation
+    seg = phi>0;
+    subplot(2,2,4);
+    imshow(seg);
+    title(strcat('Segmentation at iteration: ' ,num2str(n)));
+    
+    % Update phi
+    phi_new = updatePhi(phi, image, deltaT, mu, nu, lambda);
+    
+    % Is the solution stationary ?
+    if(stop(image, phi, phi_new))
+        display(strcat('Stopped at iteration: ', num2str(n)));
         break;
     end
     
-    %oldError = newError;
-    
+    % The new phi will be used as phi for the next iteration
     phi = phi_new;
-    t = t + deltaT;    
 end
 
-%display final contour
+% Display the final segmentation
 seg = phi>0;
-subplot(2,2,4);  imshow(seg);  title(strcat('Final Segmentation at iteration:' ,num2str(n)));
-
+subplot(2,2,4);
+imshow(seg);
+title(strcat('Final segmentation at iteration: ' ,num2str(n)));
 
 % Release the hold on the plot
 hold off;
