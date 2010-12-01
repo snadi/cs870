@@ -1,18 +1,17 @@
-function evolveChannels(iterations)
+function evolveChannels(iterations, logicop)
 
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image2 = rgb2gray(imread('data/donuttopright.jpg'));
-image1 = rgb2gray(imread('data/donutbottomleft.jpg'));
-objective = rgb2gray(imread('data/donut.jpg'));
+image2 = rgb2gray(imread('data/image1.jpg'));
+image1 = rgb2gray(imread('data/image2.jpg'));
+objective = rgb2gray(imread('data/image.jpg'));
 
 display('in evolve channels');
+imageSize = size(image1,1); % either image should work since they are the same size
 
 
-%grid = constructGrid(size(image1,1));
-phi0 =  cone(50, [80 80], 300);
-
+phi0 =  cone(50, [80 80], imageSize);
 figure();
 subplot(2,3,1); imshow(image1); title('Input Image 1');
 subplot(2,3,2); imshow(image2); title('Input Image 2');
@@ -27,7 +26,7 @@ phi = phi0;
 %---------------------------------------------------------------------------
 % Evolve the curve
 t = t0;
-deltaT = 0.05;% (grid.upperRightCorner(1) - grid.lowerLeftCorner(1)) / grid.gridSize;
+deltaT = (1/(imageSize))^2;
 
         display('starting iterations');
 for n=1:iterations
@@ -40,8 +39,8 @@ for n=1:iterations
         seg = phi>=0;
         subplot(2,3,5); imshow(seg); title('Segmentation');             
     end
-    lambda = 255;
-    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda, 'union');
+    lambda = 1;
+    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda,  logicop);
     phi_new = reinit(phi_new);
     
     phi = phi_new;
