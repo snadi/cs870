@@ -1,14 +1,21 @@
-function output = scunion(A1, A2, phi, region)
+function output = scunion(phi, region, varargin)
 
+
+output = ones(size(phi,1), size(phi,2));
 switch(region)
-    case 'inside'                
-        output =  ( zin(A1,phi).*zin(A2,phi) ).^0.5;           
+    case 'inside'
+        for i = 1 : size(varargin, 2)
+            output = zin(varargin{i}, phi).*output;
+        end       
     case 'outside'
-        output =  ( zout(A1,phi).*zout(A2,phi) ).^0.5;        
+        for i = 1 : size(varargin, 2)
+            output = zout(varargin{i}, phi).*output;
+        end        
 end
 
 output = real(output);
 
+output = output.^(1/size(varargin,2));
 
 
 end

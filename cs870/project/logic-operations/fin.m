@@ -1,13 +1,13 @@
-function output = fin(A1,A2,phi,logicop)
+function output = fin(phi,logicop, varargin)
 
 %this function determines which logic operation will be applied to the
 %inside region
 
 switch logicop
     case 'union'
-        output = scunion(A1,A2,phi,'inside');        
+        output = scunion(phi,'inside', varargin{:});               
     case 'intersection'
-        output = scintersection(A1,A2,phi,'inside');
+        output = scintersection(phi, 'inside', varargin{:});
 end
 
 end
