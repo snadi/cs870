@@ -9,9 +9,11 @@ function [phi phi0] = evolveCurve(iterations)
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image = rgb2gray(imread('data/donut.jpg'));
+image = rgb2gray(imread('data/brain.jpg'));
 
-phi0 =  cone(20, [50 50], 300);
+imageSize = size(image,1);
+
+phi0 =  cone(20, [50 50], imageSize);
 
 figure();
 subplot(2,2,1); imshow(image); title('Input Image');
@@ -25,10 +27,11 @@ phi = phi0;
 %---------------------------------------------------------------------------
 % Evolve the curve
 t = t0;
-deltaT = 0.01;
+deltaT = (1/(imageSize))^2;
+display(deltaT);
 
-% Just a dumb value to initalize the error
-oldError = 5;
+% Just a dummy value to initalize the error
+%oldError = 5;
 
 subplot(2,2,3); title('Segmentation');
         
@@ -46,8 +49,10 @@ for n=1:iterations
     
     %newError = calculateError(phi, phi_new);
     
-    if(checkstop(phi, phi_new))
-        display('break');
+    %phi is from the previous iteration. phi_new is after finite
+    %differencing
+    if(checkstop(image, phi, phi_new))
+        display(strcat('stopped at iteration : ', num2str(n)));
         break;
     end
     
@@ -59,7 +64,7 @@ end
 
 %display final contour
 seg = phi>0;
-subplot(2,2,4); imshow(seg); title('Final Segmentation');
+subplot(2,2,4);  imshow(seg);  title(strcat('Final Segmentation at iteration:' ,num2str(n)));
 
 
 % Release the hold on the plot
