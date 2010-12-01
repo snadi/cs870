@@ -6,6 +6,10 @@ function indicator = checkstop(image, old, new)
 % errorValue = max(max(error));
 % display(errorValue);
 
+display(size(image));
+display(size(old));
+display(size(new));
+
 error = size(image(old >= 0), 1) - size(image(new >=0), 1);
 
 

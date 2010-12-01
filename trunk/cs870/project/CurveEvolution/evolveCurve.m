@@ -9,7 +9,7 @@ function [phi phi0] = evolveCurve(iterations)
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image = rgb2gray(imread('data/brain.jpg'));
+image = rgb2gray(imread('data/donuts.jpg'));
 
 imageSize = size(image,1);
 
