@@ -1,11 +1,11 @@
-function evolveChannels(iterations, logicop)
+function evolveChannels(iterations)
 
 plotStep = 1;               
 t0 = 0;                      % Start at time t = 0
 
-image2 = rgb2gray(imread('data/image1.jpg'));
-image1 = rgb2gray(imread('data/image2.jpg'));
-objective = rgb2gray(imread('data/image.jpg'));
+image2 = rgb2gray(imread('data/donutbottomleft.jpg'));
+image1 = rgb2gray(imread('data/donuttopright.jpg'));
+objective = rgb2gray(imread('data/donut.jpg'));
 
 display('in evolve channels');
 imageSize = size(image1,1); % either image should work since they are the same size
@@ -39,8 +39,8 @@ for n=1:iterations
         seg = phi>=0;
         subplot(2,3,5); imshow(seg); title('Segmentation');             
     end
-    lambda = 1;
-    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda,  logicop);
+    lambda = 255;
+    phi_new = finitediffchannels(image1,image2,phi,deltaT, 0.01, lambda,  'union');
     phi_new = reinit(phi_new);
     
     phi = phi_new;
