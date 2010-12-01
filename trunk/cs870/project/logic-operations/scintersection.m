@@ -1,15 +1,22 @@
-function output = scintersection(A1, A2, phi, region)
+function output = scintersection(phi, region, varargin)
 
+
+
+output = ones(size(phi,1), size(phi,2));
 switch region
-    case 'inside'      
-        output = 1 - ((1 - zin(A1, phi)).*(1-zin(A2,phi))).^0.5;
-    case 'outside'       
-        output = 1 - ((1 - zout(A1, phi)).*(1-zout(A2,phi))).^0.5;
+    case 'inside'
+        for i = 1 : size(varargin, 2)
+            output = (1 - zin(varargin{i}, phi)).*output;
+        end
+    case 'outside'
+        for i = 1 : size(varargin, 2)
+            output = (1 - zout(varargin{i}, phi)).*output;
+        end
 end
 
 output = real(output);
 
-
+output = 1 - output.^(1/size(varargin,2));
 
 end
 

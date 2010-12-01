@@ -1,5 +1,6 @@
 function output = zin(image, phi)
 
+
 cin = mean(image(phi > 0));
 
 
