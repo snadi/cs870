@@ -1,69 +1,88 @@
-function evolveChannels(iterations)
+% evolveChannels: evlove the curve along multiple channels
+%
+% Input parameters:
+%   iterations = number of iterations
+%   phi0 = the intial contour
+%   mu = weight for the length of the curve
+%   lambda = weight for the inside and outside energies
+%   logicop = the logical operator to be applied
+%   image = the original image
+%   doReinit = reinitializing phi is optional
+%   varargin = multiple input channels, each channel is a 2D matrix
 
-plotStep = 1;               
-t0 = 0;                      % Start at time t = 0
+function evolveChannels(iterations, phi0, mu, lambda, logicop, ...
+                        image, doReinit, varargin)
 
-image1 = rgb2gray(imread('data/donuttopright.jpg'));
-image2 = rgb2gray(imread('data/donutbottomleft.jpg'));
-image3 = rgb2gray(imread('data/donutbottomright.jpg'));
+%---------------------------------------------------------------------------
+% Initializing some parameters
 
-objective = rgb2gray(imread('data/donut.jpg'));
+% Get the image size, any channel should work since they have the same size
+imageSize = size(varargin{1}, 1);
 
-display('in evolve channels');
-imageSize = size(image1,1); % either image should work since they are the same size
+% Set some parameters to be used to organize the subplots
+subPlotColumns = size(varargin, 2) + 1;
+subPlotRows = 2;
 
-
-phi0 =   cone(80, [100 100], imageSize);
-
+% Plot the input channels
 figure();
-numOfSubplots = 3;
-subplot(2,numOfSubplots,1); imshow(image1); title('Input Image 1');
-subplot(2,numOfSubplots,2); imshow(image2); title('Input Image 2');
-subplot(2,numOfSubplots,3); contour(flipud(phi0), [0 0], 'r','LineWidth',1); title('initial contour');
+for n=1:size(varargin, 2)
+    subplot(subPlotRows, subPlotColumns, n);
+    imshow(varargin{n});
+    title(strcat('Input Channel ', num2str(n)));
+end
 
-image1 = double(image1);
-image2 = double(image2);
-image3 = double(image3);
-
+% Plot the initial contour
+subplot(subPlotRows, subPlotColumns, subPlotColumns);
+contour(flipud(phi0), [0 0], 'r', 'LineWidth', 1);
+title('Initial Contour');
 
 % Initialize phi with phi0
 phi = phi0;
 
-%---------------------------------------------------------------------------
-% Evolve the curve
-t = t0;
-deltaT = (1/(imageSize))^2;
+% deltaT should satisfy the stability condition: deltaT <= 1/h^2
+deltaT = (1 / (imageSize))^2;
 
-        display('starting iterations');
+%---------------------------------------------------------------------------
+% Evolve the curve now!       
 for n=1:iterations
-    if(mod(n, plotStep) == 0) 
-        subplot(2,numOfSubplots,4);
-        imshow(objective, 'initialmagnification','fit','displayrange',[0 255]);     
-        hold on;
-        contour(phi, [0 0], 'r','LineWidth',1);      title(strcat('iteration: ',num2str(n)));
-        drawnow;
-        seg = phi>=0;
-        subplot(2,numOfSubplots,5); imshow(seg); title('Segmentation');            
-    end
-    lambda = 255*255;
-    phi_new = finitediffchannels(phi,deltaT, 0.1, lambda,  'intersection',image1,image2, image3);
-    %phi_new = reinit(phi_new);
+    % Draw the original image
+    subplot(subPlotRows, subPlotColumns, subPlotColumns + 1);
+    imshow(image, 'initialmagnification', 'fit', 'displayrange', [0 255]);
+    title('Segmentation');
+    hold on;
+
+    % Plot the contour on the image
+    contour(phi, [0 0], 'r', 'LineWidth', 1);
+    title(strcat('Iteration: ', num2str(n)));
+    drawnow;
     
-    if(checkstop(image1, phi, phi_new))
-        display(strcat('stopped at iteration : ', num2str(n)));
+    % Plot the segmentation
+    seg = phi >= 0;
+    subplot(subPlotRows, subPlotColumns, subPlotColumns + 2);
+    imshow(seg);
+    title(strcat('Segmentation at iteration: ', num2str(n)));
+    
+    % Update phi
+    phi_new = updatePhiChannels(phi, deltaT, mu, lambda, logicop, varargin{:});
+    
+    % Reinitialization is optional
+    phi_new = vif(doReinit, reinit(phi_new), phi_new);
+    
+    % Is the solution stationary ?
+    if(stop(image, phi, phi_new))
+        display(strcat('Stopped at iteration: ', num2str(n)));
         break;
     end
     
+    % The new phi will be used as phi for the next iteration
     phi = phi_new;
-    t = t + deltaT;      
 end
 
-%display final contour
-seg = phi>0;
-subplot(2,numOfSubplots,5); imshow(seg); title(strcat('Final Segmentation at iteration:' ,num2str(n)));
-
+% Display the final segmentation
+seg = phi >= 0;
+subplot(subPlotRows, subPlotColumns, subPlotColumns + 2);
+imshow(seg);
+title(strcat('Final segmentation at iteration: ', num2str(n)));
 
 % Release the hold on the plot
 hold off;
-
-end
