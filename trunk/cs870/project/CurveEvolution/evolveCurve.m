@@ -30,7 +30,7 @@ title('Initial Contour');
 % Initialize phi with phi0
 phi = phi0;
 
-% deltaT should satisfy the stability condition: deltaT = 1/h^2
+% deltaT should satisfy the stability condition: deltaT <= 1/h^2
 deltaT = (1/(imageSize))^2;
 
 % Plot the segmentation title
