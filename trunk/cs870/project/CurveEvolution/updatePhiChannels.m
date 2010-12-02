@@ -11,7 +11,7 @@
 %   logicop = the required logical operator
 %   varargin = the number of channels to operate on
 
-function resultingPhi = updatePhiChannels(phi,deltaT, mu, lambda, ...
+function resultingPhi = updatePhiChannels(phi, deltaT, mu, lambda, ...
                                             logicop, varargin)
 
 % |gradient(phi)| is used instead of the dirac delta function. This was an
