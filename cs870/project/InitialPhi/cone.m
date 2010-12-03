@@ -7,7 +7,7 @@
 % Input parameters:
 %   radius = the radius of the circle (i.e. the zero level set of phi).
 %   center = [x y] vector for the center of the circle.
-%   imagedDims = the grid that will be used for approximation.
+%   imagedDims = a vector of the dimensions of the image.
 
 function phi = cone(radius, center, imageDims)
 
@@ -19,6 +19,6 @@ xy{1} = 1 : 1 : imageDims(1);
 xy{2} = 1 : 1 : imageDims(2);
 
 axes = cell(2, 1);
-[ axes{:} ] = ndgrid(xy);
+[ axes{:} ] = ndgrid(xy{:});
 
 phi = sqrt( (axes{1} - center(1)).^2 + (axes{2} - center(2)).^2 ) - radius;

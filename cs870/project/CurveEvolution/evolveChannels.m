@@ -27,7 +27,7 @@ subPlotRows = 2;
 figure();
 for n=1:size(varargin, 2)
     subplot(subPlotRows, subPlotColumns, n);
-    imshow(varargin{n});
+    imshow(varargin{n}, 'initialmagnification','fit','displayrange',[0 255]);
     title(strcat('Input Channel ', num2str(n)));
 end
 
@@ -66,7 +66,9 @@ for n=1:iterations
     phi_new = updatePhiChannels(phi, deltaT, mu, lambda, logicop, varargin{:});
     
     % Reinitialization is optional
-    phi_new = vif(doReinit, reinit(phi_new), phi_new);
+    if(doReinit)
+        phi_new = reinit(phi_new);
+    end
     
     % Is the solution stationary ?
     if(stop(image, phi, phi_new))
