@@ -12,9 +12,10 @@ function output = fout(phi, logicop, varargin)
 
 % If the logic operator is 'union', then the energy outside the contour is given
 % by the intersection. The opposite is true.
+
 switch logicop
     case 'union'
         output = scintersection(phi, 'outside', varargin{:});
-    case 'intersection'
+    case 'intersection'        
         output = scunion(phi, 'outside', varargin{:});        
 end

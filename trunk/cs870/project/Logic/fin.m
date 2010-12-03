@@ -12,9 +12,10 @@ function output = fin(phi, logicop, varargin)
 
 % If the logic operator is 'union', then the energy inside the contour is given
 % by the intersection. The opposite is true.
+
 switch logicop
-    case 'union'
+    case 'union'        
         output = scunion(phi, 'inside', varargin{:});               
-    case 'intersection'
+    case 'intersection'        
         output = scintersection(phi, 'inside', varargin{:});
 end
