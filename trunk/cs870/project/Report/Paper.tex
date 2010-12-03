@@ -198,7 +198,7 @@ $\frac{\delta(\phi)}{|\bigtriangledown\phi|}\frac{\partial\phi}{\partial n^{\rig
 In order to make sure we correctly implemented the models, we had several evaluation criteria. Table~\ref{tab:criteria} summarizes these criteria, and explains
 the goals of each. Some of these criteria apply for both models, while other apply to one or the other. For the rest of this section, we proceed by presenting
 our experimental results for both models. For each model, we proceed in the order of these criteria starting with the simplest
-cases, and incrementally challenging the model.
+cases, and incrementally challenging the model. Unless otherwise stated, all the segmentation was performed on a gray scale version of the original image.
 
 \begin{table*}[h!t!]
 \centering
@@ -232,9 +232,63 @@ Parameter Settings & Ability to respond correctly to the different parameter set
 
 \subsubsection*{Successful Detection of Boundaries}
 
+Figure~\ref{fig:cv_eg1} shows that the implemented model can successfully detect object boundaries in a simple image. In this case, the evolving curve was
+successfully able to detect the boundaries of both objects. Figure~\ref{fig:cv_eg2} shows a slightly more complicated example where the evolving contour
+successfully detects the contour of the brain. Note that there is a tiny area to the bottom left of the brain that was also successfully detected.
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg1.png}
+\caption{Successful detection of object boundaries. Top: the evolving curve (in red) over time where the first image shows the initial contour.
+Bottom: evolving segmentation over time until the objects are detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, $\mu =
+0.01$, no reinitialization, cpu = 2.9s, 7 iterations.}
+\label{fig:cv_eg1}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg2.png}
+\caption{Successful detection of object boundaries. Top: the evolving curve (in red) over time where the first image shows the initial contour.
+Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 65.6)^2 + (y - 65.5)^2)} + 32.8$, $\mu =
+0.01$, no reinitialization, cpu = 1.95 s, took 7 iterations.}
+\label{fig:cv_eg2}
+\end{figure*}
+
+
 \subsubsection*{Independence of Initial Curve Position}
 
+To ensure that the position of the curve does not affect the final segmentation, we tested two other positions for the initial curve for the same brain image
+used in Figure~\ref{fig:cv_eg2}. In Figure~\ref{fig:cv_eg2}, the initial contour was completely overlapping the object. Accordingly, we tried two other
+positions. The first one is shown in Figure~\ref{fig:cv_eg3} where the initial contour only partially overlaps with the object. The second one is shown in
+Figure~\ref{fig:cv_eg4} where the initial contour does not overlap the object in any part. Visually, the obtained segmentation was the same with a slightly
+higher number of iterations and CPU time. In all three cases, the brain was correctly segmented. We compared the area segmented as the brain in each case to
+make sure the same segmentation was obtained, and in each case, we got the same area of 0.5268. Note, however, that when part of the curve lies outside the
+object, the definition of inside and outside changes since the curve becomes an open curve at one point. This should not make a difference as long as the
+contour lies correctly at the boundaries of the object.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg3.png}
+\caption{Initial curve position partially overlapping object. Top: the evolving curve (in red) over time where the first image shows the initial contour.
+Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 30)^2 + (y - 30)^2)} + 20$, $\mu =
+0.01$, no reinitialization, cpu = 2.26 s, took 9 iterations.}
+\label{fig:cv_eg3}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg4.png}
+\caption{Initial curve position not overlapping any area of the object. Top: the evolving curve (in red) over time where the first image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 120)^2 + (y - 120)^2)} + 10$,
+$\mu =0.01$, no reinitialization, cpu = 2.01 s, took 9 iterations.}
+\label{fig:cv_eg4}
+\end{figure*}
+
 \subsubsection*{Successful Detection of Holes}
+
+In order to make sure the contour does not simply stop at the outside boundary of an object and ignore any details inside such as holes, we first tried a
+simple donut example, and then tried two more complicated donut images. 
 
 \subsubsection*{Reasonable Performance with Blurred Images}
 
@@ -243,6 +297,8 @@ Parameter Settings & Ability to respond correctly to the different parameter set
 \subsubsection*{Successful Response to Parameter Settings}
 
 \subsubsection*{Other Tests}
+
+flowers here
 
 \subsection{Sandberg-Chan Model Results}
 
