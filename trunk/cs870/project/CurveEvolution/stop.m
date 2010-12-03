@@ -14,4 +14,8 @@ function indicator = stop(image, old, new)
 % introduces new points inside the curve or not.
 error = size(image(old >= 0), 1) - size(image(new >=0), 1);
 
-indicator = vif(error == 0, 1, 0);
+if(error == 0)
+    indicator = true;
+else
+    indicator = false;
+end

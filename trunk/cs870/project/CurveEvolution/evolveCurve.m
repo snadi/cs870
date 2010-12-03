@@ -7,8 +7,9 @@
 %   mu = weight for the length of the curve
 %   nu = weight for the area of the curve
 %   lambda = weight for the inside and outside energies
+%   doReinit = reinitializing phi is optional
 
-function evolveCurve(iterations, image, phi0, mu, nu, lambda)
+function evolveCurve(iterations, image, phi0, mu, nu, lambda, doReinit)
 
 %---------------------------------------------------------------------------
 % Initializing some parameters
@@ -19,7 +20,7 @@ imageSize = size(image,1);
 % Plot the input image
 figure();
 subplot(2, 2, 1);
-imshow(image);
+imshow(image, 'initialmagnification','fit','displayrange',[0 255]);
 title('Input Image');
 
 % Plot the initial contour
@@ -55,6 +56,11 @@ for n=1:iterations
     
     % Update phi
     phi_new = updatePhi(phi, image, deltaT, mu, nu, lambda);
+    
+    % Reinitialization is optional
+    if(doReinit)
+        phi_new = reinit(phi_new);
+    end
     
     % Is the solution stationary ?
     if(stop(image, phi, phi_new))
