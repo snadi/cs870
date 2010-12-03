@@ -58,7 +58,7 @@ for n=1:iterations
     
     % Plot the segmentation
     seg = phi >= 0;
-    subplot(subPlotRows, subPlotColumns, subPlotColumns + 2);
+    subplot(subPlotRows, subPlotColumns, subPlotRows * subPlotColumns);
     imshow(seg);
     title(strcat('Segmentation at iteration: ', num2str(n)));
     
@@ -82,7 +82,7 @@ end
 
 % Display the final segmentation
 seg = phi >= 0;
-subplot(subPlotRows, subPlotColumns, subPlotColumns + 2);
+subplot(subPlotRows, subPlotColumns, subPlotRows * subPlotColumns);
 imshow(seg);
 title(strcat('Final segmentation at iteration: ', num2str(n)));
 
