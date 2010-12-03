@@ -4,7 +4,7 @@ function test1()
 
 iterations = 100;
 
-image = readGSImage('brain.jpg');
+image = readGSImage('flowers.jpg');
 imageSize = size(image, 1);
 
 phi0 = cone(imageSize/4, [imageSize/2 imageSize/2], size(image));

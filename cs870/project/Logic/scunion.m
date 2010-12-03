@@ -11,6 +11,7 @@
 function output = scunion(phi, region, varargin)
 
 output = ones(size(phi,1), size(phi,2));
+
 switch(region)
     case 'inside'
         for i = 1 : size(varargin, 2)
