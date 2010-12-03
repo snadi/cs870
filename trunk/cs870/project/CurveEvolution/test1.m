@@ -1,3 +1,12 @@
+% test: testing
+% 
+% Output parameters:
+%   output = the logic value for the inside of the curve
+% 
+% Input parameters:
+%   image = the original image
+%   phi = current phi
+
 function test(iterations)
 
 plotStep = 1;               
