@@ -7,7 +7,14 @@
 %   fileName = the file name of the image, it's assumed all images are in
 %   the data folder
 
-function image = readGSImage(fileName)
+function image = readGSImage(fileName, addNoise)
 
-image = rgb2gray(imread(strcat('data/', fileName)));
-image = double(image);
+if(addNoise)
+    image = imread(strcat('data/', fileName));
+    image = imnoise(image,'salt & pepper');    
+    image = rgb2gray(image);   
+else      
+    image = rgb2gray(imread(strcat('data/', fileName)));   
+end
+
+ image = double(image);  
