@@ -198,7 +198,8 @@ $\frac{\delta(\phi)}{|\bigtriangledown\phi|}\frac{\partial\phi}{\partial n^{\rig
 In order to make sure we correctly implemented the models, we had several evaluation criteria. Table~\ref{tab:criteria} summarizes these criteria, and explains
 the goals of each. Some of these criteria apply for both models, while other apply to one or the other. For the rest of this section, we proceed by presenting
 our experimental results for both models. For each model, we proceed in the order of these criteria starting with the simplest
-cases, and incrementally challenging the model. Unless otherwise stated, all the segmentation was performed on a gray scale version of the original image.
+cases, and incrementally challenging the model. Unless otherwise stated, all the segmentation was performed on a gray scale version of the original image. All
+the images in the Chan-Vese model were run on a BLA COMPUTER and all the images in the Sandberg-Chan model were run on a BLA computer.
 
 \begin{table*}[h!t!]
 \centering
@@ -265,7 +266,7 @@ Figure~\ref{fig:cv_eg4} where the initial contour does not overlap the object in
 higher number of iterations and CPU time. In all three cases, the brain was correctly segmented. We compared the area segmented as the brain in each case to
 make sure the same segmentation was obtained, and in each case, we got the same area of 0.5268. Note, however, that when part of the curve lies outside the
 object, the definition of inside and outside changes since the curve becomes an open curve at one point. This should not make a difference as long as the
-contour lies correctly at the boundaries of the object.
+contour lies correctly at the boundaries of the object. 
 
 \begin{figure*}[t]
 \centering
@@ -280,25 +281,53 @@ Bottom: evolving segmentation over time until the object is detected. Size = 131
 \centering
 \includegraphics[width=12cm]{cv_eg4.png}
 \caption{Initial curve position not overlapping any area of the object. Top: the evolving curve (in red) over time where the first image shows the initial
-contour.Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 120)^2 + (y - 120)^2)} + 10$,
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 120)^2 + (y - 120)^2)} + 10$,
 $\mu =0.01$, no reinitialization, cpu = 2.01 s, took 9 iterations.}
 \label{fig:cv_eg4}
 \end{figure*}
 
 \subsubsection*{Successful Detection of Holes}
 
-In order to make sure the contour does not simply stop at the outside boundary of an object and ignore any details inside such as holes, we first tried a
-simple donut example, and then tried two more complicated donut images. 
+In order to make sure the contour does not simply stop at the outside boundary of an object and ignore any details inside such as holes, we tried two donut
+images. Figure~\ref{fig:cv_eg5} shows how the curve is able to detect the hole in the donut. Additionally, it is able to detect the various sprinkles on it.
+We note that the bottom right boundary is not very exact, and this is because the lighting effect in the image makes the intensity of this area very close to
+that of the background This is a known drawback of the Chan-Vese model since it only divides the image into two regions, and requires a big variation in
+intensities for the curve to change. Another example showing this limitation is shown in Figure~\ref{fig:cv_eg7} where the flower parts with very low
+intensities are not detected. Figure~\ref{fig:cv_eg6} shows that multiple holes in an image can also be successfully detected.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg5.png}
+\caption{Successful detection of holes.  Top: the evolving curve (in red) over time where the first image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 65.5)^2 + (y - 65.5)^2)} + 32.8$,
+$\mu =0.01$, no reinitialization, cpu = 8.12 s, took 12 iterations.}
+\label{fig:cv_eg5}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg6.png}
+\caption{Successful detection of multiple holes.  Top: the evolving curve (in red) over time where the first image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,
+$\mu =0.01$, no reinitialization, cpu = 15.07 s, took 23 iterations.}
+\label{fig:cv_eg6}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg7.png}
+\caption{Inability to detect low intensities that have not much variation from their background.  Top: the evolving curve (in red) over time where the first
+image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,
+$\mu =0.01$, no reinitialization, cpu = 1.35 s, took 6 iterations.}
+\label{fig:cv_eg7}
+\end{figure*}
 
 \subsubsection*{Reasonable Performance with Blurred Images}
 
 \subsubsection*{Reasonable Performance with Noisy Images}
 
 \subsubsection*{Successful Response to Parameter Settings}
-
-\subsubsection*{Other Tests}
-
-flowers here
 
 \subsection{Sandberg-Chan Model Results}
 
