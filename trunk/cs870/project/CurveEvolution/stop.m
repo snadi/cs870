@@ -8,14 +8,8 @@
 %   old = old phi
 %   new = new phi
 
-function indicator = stop(image, old, new)
+function indicator = stop(old, new)
 
 % Basically, what we're trying to do here is to detect if the new phi
 % introduces new points inside the curve or not.
-error = size(image(old >= 0), 1) - size(image(new >=0), 1);
-
-if(error == 0)
-    indicator = true;
-else
-    indicator = false;
-end
+indicator = isequal(old > 0, new > 0);

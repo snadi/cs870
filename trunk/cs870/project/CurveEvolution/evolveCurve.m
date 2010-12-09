@@ -63,7 +63,7 @@ for n=1:iterations
     end
     
     % Is the solution stationary ?
-    if(stop(image, phi, phi_new))
+    if(stop(phi, phi_new))
         display(strcat('Stopped at iteration: ', num2str(n)));
         break;
     end

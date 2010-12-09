@@ -8,10 +8,11 @@
 %   logicop = the logical operator to be applied
 %   image = the original image
 %   doReinit = reinitializing phi is optional
+%   complement = vector of all channels that we will deal with their complement
 %   varargin = multiple input channels, each channel is a 2D matrix
 
 function evolveChannels(iterations, phi0, mu, lambda, logicop, ...
-                        image, doReinit, varargin)
+                        image, doReinit, complement, varargin)
 
 %---------------------------------------------------------------------------
 % Initializing some parameters
@@ -47,7 +48,7 @@ deltaT = (1 / (imageSize))^2;
 for n=1:iterations
     % Draw the original image
     subplot(subPlotRows, subPlotColumns, subPlotColumns + 1);
-    imshow(image, 'initialmagnification', 'fit', 'displayrange', [0 255]);
+    imshow(varargin{1}, 'initialmagnification', 'fit', 'displayrange', [0 255]);
     title('Segmentation');
     hold on;
 
@@ -63,7 +64,8 @@ for n=1:iterations
     title(strcat('Segmentation at iteration: ', num2str(n)));
     
     % Update phi
-    phi_new = updatePhiChannels(phi, deltaT, mu, lambda, logicop, varargin{:});
+    phi_new = updatePhiChannels(phi, deltaT, mu, lambda, logicop, ...
+                                complement, varargin{:});
     
     % Reinitialization is optional
     if(doReinit)
@@ -71,13 +73,15 @@ for n=1:iterations
     end
     
     % Is the solution stationary ?
-    if(stop(image, phi, phi_new))
+    if(stop(phi, phi_new))
         display(strcat('Stopped at iteration: ', num2str(n)));
         break;
     end
     
     % The new phi will be used as phi for the next iteration
     phi = phi_new;
+    
+    % pause;
 end
 
 % Display the final segmentation

@@ -6,20 +6,29 @@
 % Input parameters:
 %   phi = current phi
 %   region = 'inside' or 'outside'
+%   complement = vector of all channels that we will deal with their complement
 %   varargin = input channels
 
-function output = scintersection(phi, region, varargin)
+function output = scintersection(phi, region, complement, varargin)
 
 output = ones(size(phi,1), size(phi,2));
 
 switch region
     case 'inside'
         for i = 1 : size(varargin, 2)
-            output = (1 - zin(varargin{i}, phi)).*output;
+            if(size(find(complement == i) > 0))
+                output = (1 - sccomplement(zin(varargin{i}, phi))).*output;
+            else
+                output = (1 - zin(varargin{i}, phi)).*output;
+            end
         end
     case 'outside'
         for i = 1 : size(varargin, 2)
-            output = (1 - zout(varargin{i}, phi)).*output;
+            if(size(find(complement == i) > 0))
+                output = (1 - sccomplement(zout(varargin{i}, phi))).*output;
+            else
+                output = (1 - zout(varargin{i}, phi)).*output;
+            end
         end
 end
 
