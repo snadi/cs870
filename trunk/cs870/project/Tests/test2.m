@@ -2,16 +2,19 @@
 
 function test2()
 
-iterations = 100;
+startTime = cputime;
 
-image = imread('flowers.jpg');
+iterations = 10;
+
+% image = imread('flowers.jpg');
+image = readGSImage('image.jpg');
 imageSize = size(image, 1);
+% 
+% [r g b] = readRGBImage('flowers.jpg');
 
-[r g b] = readRGBImage('flowers.jpg');
-
-%image1 = readGSImage('image1.jpg');
-%image2 = readGSImage('image2.jpg');
-%image3 = readGSImage('image3.jpg');
+image1 = readGSImage('image1.jpg');
+image2 = readGSImage('image2.jpg');
+% image3 = readGSImage('image3.jpg');
 
 phi0 = cone(imageSize/4, [imageSize/2 imageSize/2], size(image));
 
@@ -19,8 +22,15 @@ mu = 0.01;
 
 lambda = 255*255;
 
-logicop = 'union';
+logicop = 'intersection';
 
 doReinit = false;
 
-evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, r, g, b);
+complement = [2];
+
+evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, complement, image1, image2);
+% evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, r, g, b);
+
+timeTaken = cputime - startTime;
+
+display(strcat('Time taken = ', num2str(timeTaken), 'seconds'));
