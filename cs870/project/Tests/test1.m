@@ -2,6 +2,8 @@
 
 function test1()
 
+startTime = cputime;
+
 iterations = 100;
 
 image = readGSImage('flowers.jpg');
@@ -18,3 +20,7 @@ lambda = 1;
 doReinit = false;
 
 evolveCurve(iterations, image, phi0, mu, nu, lambda, doReinit);
+
+timeTaken = cputime - startTime;
+
+display(strcat('Time taken = ', num2str(timeTaken), 'seconds'));
