@@ -191,6 +191,20 @@ $\frac{\delta(\phi)}{|\bigtriangledown\phi|}\frac{\partial\phi}{\partial n^{\rig
 \section{Implementation}
 \label{sec:implementation}
 
+During implementation, we tried to stick to the authors' formulas and guidelines as much as possible. In this section we explain the choices we made regardless
+implementation. For the chan-vese model, we used the PDE given in Equation 9 in the original paper~\cite{chan2001active} which is shown in
+Equation~\ref{eqn:cvpde}.  We, first, tried to implement the delta dirac function, $\delta_{\varepsilon}\phi$, as defined in the paper. However, we did not
+get non-zero values everywhere as indicated by the authors. Accordingly, we chose to use $|\bigtriangledown\phi|$ instead of the delta dirac function as this
+was indicated as a valid alternative by the authors. To calculate $c_{1}$ and $c_{2}$, we simply calculated the mean of the values inside $\phi$ (specifically
+where $\phi > 0$) and the mean of the values outside $\phi$ (specifically where $\phi < 0$) respectively. To actually solve the PDE, we chose to use an explicit
+time stepping scheme for the finite difference discretization. That is, in each time step $\phi_{t} = \phi + \triangle t*force$. This was simpler to implement,
+and although $\triangle t$ must be chosen carefully to satisfy the stability condition, we did not suffer from performance problems due to this restriction.
+
+For the sandberg-chan model, we used the PDE given in original paper as well, and shown in Equation~\ref{eqn:svpde}. Again, we used $|\bigtriangledown\phi|$
+instead of the dirac function. We calculated $z_{in}$ and $z_{out}$ according to Equations~\ref{eqn:zin, eqn:zout} shown above which have been corrected for
+the typo in the original paper. For all other equations and calculations necessary in the model, we closely followed the original paper in our implementation.
+We also used an explicit time stepping scheme in this model. 
+
 
 \section{Experimental Results}
 \label{sec:results}
@@ -231,11 +245,15 @@ Parameter Settings & Ability to respond correctly to the different parameter set
 
 \subsection{Chan-Vese Model Results}
 
+We present the results from the Chan-Vese model in this section, and show which criteria were met and which were not. Unless otherwise specified, we set
+$\lambda_{1} = \lambda_{2} = 1$.
+
 \subsubsection*{Successful Detection of Boundaries}
 
 Figure~\ref{fig:cv_eg1} shows that the implemented model can successfully detect object boundaries in a simple image. In this case, the evolving curve was
 successfully able to detect the boundaries of both objects. Figure~\ref{fig:cv_eg2} shows a slightly more complicated example where the evolving contour
-successfully detects the contour of the brain. Note that there is a tiny area to the bottom left of the brain that was also successfully detected.
+successfully detects the contour of the brain. Note that there is a tiny area to the bottom left of the brain that was also successfully detected. To ensure
+that open boundaries (e.g. lines) can also be detected, we used an image with several shapes shown in Figure~\ref{fig:cv_eg8};
 
 
 \begin{figure*}[t]
@@ -254,6 +272,15 @@ Bottom: evolving segmentation over time until the objects are detected. Size = 3
 Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 65.6)^2 + (y - 65.5)^2)} + 32.8$, $\mu =
 0.01$, no reinitialization, cpu = 1.95 s, took 7 iterations.}
 \label{fig:cv_eg2}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg8.png}
+\caption{Successful detection of object with open boundaries. Top: the evolving curve (in red) over time where the first image shows the initial contour.
+Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, $\mu =
+0.01$, no reinitialization, cpu = 5.19 s, took 11 iterations.}
+\label{fig:cv_eg8}
 \end{figure*}
 
 
@@ -293,7 +320,8 @@ images. Figure~\ref{fig:cv_eg5} shows how the curve is able to detect the hole i
 We note that the bottom right boundary is not very exact, and this is because the lighting effect in the image makes the intensity of this area very close to
 that of the background This is a known drawback of the Chan-Vese model since it only divides the image into two regions, and requires a big variation in
 intensities for the curve to change. Another example showing this limitation is shown in Figure~\ref{fig:cv_eg7} where the flower parts with very low
-intensities are not detected. Figure~\ref{fig:cv_eg6} shows that multiple holes in an image can also be successfully detected.
+intensities are not detected. We will show that we can overcome this limitation with the Sandberg-Chan model for this particular example.
+Figure~\ref{fig:cv_eg6} shows that multiple holes in an image can also be successfully detected.
 
 \begin{figure*}[t]
 \centering
@@ -325,11 +353,72 @@ $\mu =0.01$, no reinitialization, cpu = 1.35 s, took 6 iterations.}
 
 \subsubsection*{Reasonable Performance with Blurred Images}
 
+Figure~\ref{fig:cv_eg9} shows how the contour behaves in a blurry image. The photographer was successfully detected. Additionally, other objects in the image
+such as the tripod were found. However, objects with a very light intensity were again not detected.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg9.png}
+\caption{Ability to detect contours in blurry images.  Top: the evolving curve (in red) over time where the first
+image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 255 x 255, $\phi_{0}(x,y) = - \sqrt{(x - 127.5)^2 + (y - 127.5)^2)} +
+63.75$, $\mu =0.01$, no reinitialization, cpu = 5.41 s, took 15 iterations.}
+\label{fig:cv_eg9}
+\end{figure*}
+
 \subsubsection*{Reasonable Performance with Noisy Images}
+
+Figure~\ref{fig:cv_eg10} shows how two objects in a noisy image were successfully detected. In this image, we added Gaussian noise with mean zero and 0.01
+variance using Matlab's built-in noise function. The image shows that although some of the noise was detected in intermediate iterations, the contour continued
+to evolve until it was only surrounding the desired objects. Unfortunately, the effect of noise was not completely ignored in all cases. For example,
+Figure~\ref{fig:cv_eg11} shows that for the same image, but with 'salt \& pepper' noise, the noise was detected as objects. This should not have been the case
+since we used a large value $\mu = 5$ for the length scaling parameter. However, for some reason, varying $\mu$ did not have the intended effect as explained
+in the next section. 
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg10.png}
+\caption{Ability to detect contours in an image with Gaussian noise.  Top: the evolving curve (in red) over time where the first
+image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} +
+75$, $\mu =0.01$, no reinitialization, cpu = 4.4 s, took 7 iterations.}
+\label{fig:cv_eg10}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg11.png}
+\caption{Same image as Figure~\ref{fig:cv_eg10}, but with 'salt \& pepper' noise. Noise was still detected despite increasing $\mu$.  Top: the evolving curve
+(in red) over time where the first
+image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} +
+75$, $\mu = 5$, no reinitialization, cpu = 12.27 s, took 7 iterations.}
+\label{fig:cv_eg11}
+\end{figure*}
 
 \subsubsection*{Successful Response to Parameter Settings}
 
+There are mainly three parameters in this model that can be varied: $\mu, \lambda_{1}, \lambda_{2}$. We would usually want both $\lambda_{1}$ and $\lambda_{2}$
+to be equal to 1 to indicate that we care both about the difference of intensities inside and outside. A smaller weighting for one of them would mean that we
+would ignore some of the variances in intensities in this area. A larger weighting means that we are magnifying the difference in intensities in that area
+(i.e. we want to detect any minor changes). We show an example of these variations in Figure~\ref{fig:cv_eg12} where we keep $\lambda_{2}$ constant, and vary
+$lambda_1$. When we set $\lambda_1 = 0.2$, it is shown that less details within the interior of the brain is detected. When we set $\lambda_2 = 2$, we can see
+that more details within the brain are detected. 
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg12.png}
+\caption{Effect of varying $\lambda_1$ which controls how much details are detected inside the contour.}
+\label{fig:cv_eg12}
+\end{figure*}
+
+$\lambda_1 = \lambda_2 = 1$
+$\lambda_1 = 2, \lambda_2 = 1$
+$\lambda_1 = 0.2, \lambda_2 = 1$ 
+
 \subsection{Sandberg-Chan Model Results}
+
+For the Sandberg-Chan model, the successful detection of boundaries criteria is implicitly 
 
 \subsubsection*{Successful Detection of Boundaries}
 
