@@ -34,10 +34,10 @@ ReadWrite=true
 
 [item:Paper.tex]
 archive=true
-column=91
+column=1
 encoding=UTF-8
 highlight=LaTeX
-line=347
+line=237
 mode=LaTeX
 open=true
 order=1
@@ -63,8 +63,8 @@ open=true
 order=0
 
 [view-settings,view=0,item:Paper.tex]
-CursorColumn=91
-CursorLine=347
+CursorColumn=1
+CursorLine=237
 
 [view-settings,view=0,item:references.bib]
 CursorColumn=0
