@@ -401,24 +401,29 @@ contour.Bottom: evolving segmentation over time until the object is detected. Si
 There are mainly three parameters in this model that can be varied: $\mu, \lambda_{1}, \lambda_{2}$. We would usually want both $\lambda_{1}$ and $\lambda_{2}$
 to be equal to 1 to indicate that we care both about the difference of intensities inside and outside. A smaller weighting for one of them would mean that we
 would ignore some of the variances in intensities in this area. A larger weighting means that we are magnifying the difference in intensities in that area
-(i.e. we want to detect any minor changes). We show an example of these variations in Figure~\ref{fig:cv_eg12} where we keep $\lambda_{2}$ constant, and vary
-$lambda_1$. When we set $\lambda_1 = 0.2$, it is shown that less details within the interior of the brain is detected. When we set $\lambda_2 = 2$, we can see
-that more details within the brain are detected. 
+(i.e. we want to detect any minor changes). We show an example of these variations in Figure~\ref{fig:cv_eg12} where we vary
+$lambda_1$ and $\lambda_2$. When we set $\lambda_1 = 0.2$ and $\lambda_2 = 1$, less details within the interior of the brain is detected. When
+we set $\lambda_1 = 2$ and $\lambda_2 = 1$, we can see that more details within the brain are detected. When we set $\lambda_1 = 5$, and $\lambda_2 = 0.01$ (a
+very extreme case), we can see that parts of outside boundaries are not well detected, while many details are detected within the brain.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=12cm]{cv_eg12.png}
-\caption{Effect of varying $\lambda_1$ which controls how much details are detected inside the contour.}
+\caption{Effect of varying $\lambda_1$ which controls how much details are detected inside the contour. The figure shows the segmentation in each case.}
 \label{fig:cv_eg12}
 \end{figure*}
 
-$\lambda_1 = \lambda_2 = 1$
-$\lambda_1 = 2, \lambda_2 = 1$
-$\lambda_1 = 0.2, \lambda_2 = 1$ 
+The second parameter, $\mu$ controls how much we allow the length of the curve to increase. If $\mu$ is small, it means that the curve length can increase to
+detect multiple smaller objects without penalizing our minimization problem. On the other hand if $\mu$ is large, it means that any change in the curve length
+will be scaled up, and thus will limit the curve expansion to keep the force to a minimum. Unfortunately, we were not able to see this effect in our
+experiments. We tried varying increasing $\mu$ to be able to detect groupings of objects instead of the individual objects, but the segmentation was invariant
+to $\mu$. We give more details about how we tried to handle this, and why we believe it is not working in Section~\ref{sec:difficulties}.
 
 \subsection{Sandberg-Chan Model Results}
 
 For the Sandberg-Chan model, the successful detection of boundaries criteria is implicitly 
+
+
 
 \subsubsection*{Successful Detection of Boundaries}
 
