@@ -80,8 +80,6 @@ for n=1:iterations
     
     % The new phi will be used as phi for the next iteration
     phi = phi_new;
-    
-    pause;
 end
 
 % Display the final segmentation
