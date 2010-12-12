@@ -366,6 +366,20 @@ contour.Bottom: evolving segmentation over time until the object is detected. Si
 
 \subsubsection*{Reasonable Performance with Noisy Images}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=7cm]{sc_unionsimple.png}
+\caption{}
+\label{fig:sc_unionsimple}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=7cm]{sc_intersectionsimple.png}
+\caption{}
+\label{fig:sc_intersectionsimple}
+\end{figure}
+
 Figure~\ref{fig:cv_eg10} shows how two objects in a noisy image were successfully detected. In this image, we added Gaussian noise with mean zero and 0.01
 variance using Matlab's built-in noise function. The image shows that although some of the noise was detected in intermediate iterations, the contour continued
 to evolve until it was only surrounding the desired objects. Unfortunately, the effect of noise was not completely ignored in all cases. For example,
@@ -404,6 +418,13 @@ $lambda_1$ and $\lambda_2$. When we set $\lambda_1 = 0.2$ and $\lambda_2 = 1$, l
 we set $\lambda_1 = 2$ and $\lambda_2 = 1$, we can see that more details within the brain are detected. When we set $\lambda_1 = 5$, and $\lambda_2 = 0.01$ (a
 very extreme case), we can see that parts of outside boundaries are not well detected, while many details are detected within the brain.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=7cm]{threech.png}
+\caption{}
+\label{fig:threech}
+\end{figure}
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=12cm]{cv_eg12.png}
@@ -419,23 +440,50 @@ to $\mu$. We give more details about how we tried to handle this, and why we bel
 
 \subsection{Sandberg-Chan Model Results}
 
-For the Sandberg-Chan model, the successful detection of boundaries criteria is implicitly 
+For the Sandberg-Chan model, the successful detection of boundaries criteria is implicitly included in the logic operations functionality. We therefore, show
+the other criteria.
+
+
+\subsubsection*{Logic Operators: union and intersection}
+
+To ensure that the union operator is working properly, we tried it on a very simple example of two rectangles shown in Figure~\ref{fig:sc_unionsimple}. The
+union of the two rectangles was successfully detected. Similarly, Figure~\ref{fig:sc_intersectionsimple} shows the intersection for the same two simple
+rectangles. 
+
+Figure~\ref{fig:donutlogic} shows a more complicated example for both the intersection and union with the donut image shown in the previous section. We used
+two versions of the donuts with each one having a different part occluded. The results of the union and intersection operators are shown in the figure.
+Additionally, this example shows that the Sandberg-Chan model can still successfully detect holes despite the addition of the logic operations.
+
+A practical usage of this logic operations framework is to recover missing parts from different images, and combine them to produce a more complete image. We
+show this in Figure~\ref{fig:family} which shows two different version of a family image with a child missing in each image. When the union is applied to these
+two channels, the complete family image is recovered.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{donutlogic.png}
+\caption{}
+\label{fig:donutlogic}
+\end{figure*}
 
 
 
-\subsubsection*{Successful Detection of Boundaries}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{flowers.png}
+\caption{}
+\label{fig:threech}
+\end{figure*}
+
 
 \subsubsection*{Independence of Initial Curve Position}
 
-\subsubsection*{Successful Detection of Holes}
+Similar to the previous model, we needed to ensure that the position of the initial curve does not alter our results. Figure~\ref{fig:sc_initialcurve} shows
+the segmentation results obtained for the same image used in Figure~\ref{fig:sc_unionsimple}, but with a different position for the initial curve.
+
 
 \subsubsection*{Reasonable Performance with Blurred Images}
 
 \subsubsection*{Reasonable Performance with Noisy Images}
-
-\subsubsection*{Union}
-
-\subsubsection*{Intersection}
 
 \subsubsection*{Complement}
 
