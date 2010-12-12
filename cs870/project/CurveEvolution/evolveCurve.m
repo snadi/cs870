@@ -32,7 +32,7 @@ title('Initial Contour');
 phi = phi0;
 
 % deltaT should satisfy the stability condition: deltaT <= 1/h^2
-deltaT = (1 / (imageSize))^2;    
+deltaT = (1 / (imageSize))^2;
     
 %---------------------------------------------------------------------------
 % Evolve the curve now!

@@ -23,15 +23,13 @@ cout = mean(image(phi<0));
 normOfGradient = norm(gradient(phi));
 
 % Difference of intensities outside - inside
-force = lambda * (double((image - cout).^2) - double((image - cin).^2));
+force = lambda * ((image - cout).^2 - (image - cin).^2);
 
 % Calculate the curvature term in the PDE
-curvature = kappa(phi);
+curvature = mu * kappa(phi);
 
 % Calculate phi_t according to the PDE in the paper
-phi_t =  normOfGradient * ( mu * curvature - nu + force);
+phi_t =  normOfGradient * (curvature - nu + force);
 
 % Update phi
 resultingPhi = phi + deltaT * phi_t;
-
-
