@@ -6,12 +6,12 @@ startTime = cputime;
 
 iterations = 100;
 
-image = readGSImage('flowers.jpg');
+image = readGSImage('grouping3.jpg');
 imageSize = size(image, 1);
 
-phi0 = cone(imageSize/4, [imageSize/2 imageSize/2], size(image));
+phi0 = cone(floor(imageSize/4), [floor(imageSize/2) floor(imageSize/2)], size(image));
 
-mu = 0.01;
+mu = 0.1;
 
 nu = 0;
 

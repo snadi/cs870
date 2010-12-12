@@ -48,7 +48,7 @@ deltaT = (1 / (imageSize))^2;
 for n=1:iterations
     % Draw the original image
     subplot(subPlotRows, subPlotColumns, subPlotColumns + 1);
-    imshow(varargin{1}, 'initialmagnification', 'fit', 'displayrange', [0 255]);
+    imshow(image, 'initialmagnification', 'fit', 'displayrange', [0 255]);
     title('Segmentation');
     hold on;
 
@@ -80,8 +80,6 @@ for n=1:iterations
     
     % The new phi will be used as phi for the next iteration
     phi = phi_new;
-    
-    % pause;
 end
 
 % Display the final segmentation

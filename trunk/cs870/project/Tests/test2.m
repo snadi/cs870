@@ -9,7 +9,7 @@ iterations = 10;
 % image = imread('flowers.jpg');
 image = readGSImage('image.jpg');
 imageSize = size(image, 1);
-% 
+
 % [r g b] = readRGBImage('flowers.jpg');
 
 image1 = readGSImage('image1.jpg');
@@ -26,7 +26,7 @@ logicop = 'intersection';
 
 doReinit = false;
 
-complement = [2];
+complement = 2;
 
 evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, complement, image1, image2);
 % evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, r, g, b);
