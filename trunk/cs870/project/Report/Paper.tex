@@ -1,17 +1,20 @@
 
 
-\documentclass[10pt,journal,letterpaper,compsoc]{IEEEtran}
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
 \usepackage{cite}
 \usepackage{url}
-\usepackage{times}
 \usepackage{graphicx}
-\usepackage{url}
 \usepackage{clrscode}
 \usepackage{tabularx}
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{color}
 \usepackage{balance}
+
+\cvprfinalcopy
+\ifcvprfinal\pagestyle{empty}\fi
 
 \begin{document}
 
@@ -25,19 +28,12 @@ University of Waterloo\\
 
 
 
-% The paper headers
-\markboth{CS870 Project Report - Active Contour without Edges}%
-{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Computer Society Journals}
+\maketitle
 
-
-\IEEEcompsoctitleabstractindextext{%
 \begin{abstract}
 %\boldmath
 The abstract goes here.
 \end{abstract}
-}
-
-\maketitle
 
 
 
@@ -217,6 +213,7 @@ the images in the Chan-Vese model were run on a BLA COMPUTER and all the images 
 
 \begin{table*}[h!t!]
 \centering
+\resizebox{\textwidth }{!}{
 \begin{tabular}{ c | c |c}
 \textbf{Criteria} & \textbf{Goal} & \textbf{Applies to Model}\\
 \hline\hline
@@ -238,6 +235,7 @@ Complement & Ability to correctly obtain the union or intersection of two or mor
 \hline
 Parameter Settings & Ability to respond correctly to the different parameter settings & Both Models\\
 \end{tabular}
+}
 \centering
 \caption{Evaluation Criteria}
 \label{tab:criteria}
