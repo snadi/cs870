@@ -378,9 +378,9 @@ In order to make sure the contour does not simply stop at the outside boundary o
 images. Figure~\ref{fig:cv_eg5} shows how the curve is able to detect the hole in the donut. Additionally, it is able to detect the various sprinkles on it.
 We note that the bottom right boundary is not very exact, and this is because the lighting effect in the image makes the intensity of this area very close to
 that of the background This is a known drawback of the Chan-Vese model since it only divides the image into two regions, and requires a big variation in
-intensities for the curve to change. Another example showing this limitation is shown in Figure~\ref{fig:cv_eg7} where the flower parts with very low
+intensities for the curve to change. Figure~\ref{fig:cv_eg6} shows that multiple holes in an image can also be successfully detected. Another example showing
+the inability to detect objects with intensities close to that of the background is shown in Figure~\ref{fig:cv_eg7} where the flower parts with very low
 intensities are not detected. We will show that we can overcome this limitation with the Sandberg-Chan model for this particular example.
-Figure~\ref{fig:cv_eg6} shows that multiple holes in an image can also be successfully detected.
 
 
 \subsubsection*{Reasonable Performance with Blurred Images}
@@ -503,23 +503,23 @@ Figure~\ref{fig:threech} shows the union, intersection, and the intersection of 
 
 \subsubsection*{Independence of Initial Curve Position}
 
-\begin{figure}[h!]
+\begin{figure*}[t!]
 \centering
 \includegraphics[width=0.3\textwidth]{family.png}
 \caption{Combining missing information from two different channels. Size = 114 x 114. $\phi_{0}(x,y) = \sqrt{(x - 57)^2 + (y - 57)^2} -
 28.5$, no reinitialization. Union: cpu = 4.01 s and iterations = 7. Intersection: cpu = 4.12 s and iterations = 7.}
 \label{fig:family}
-\end{figure}
+\end{figure*}
 
 \begin{figure*}[t!]
 \centering
-\includegraphics[width=12cm]{donutlogic.png}
+\includegraphics[width=0.5\textwidth]{donutlogic.png}
 \caption{Performing union and intersection on images with holes. Size = 300 x 300. $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} +
 75$, no reinitialization. For union: cpu = 8.63 sec and iterations = 10. For intersection: cpu = 7.68 sec and iterations = 10.}
 \label{fig:donutlogic}
 \end{figure*}
 
-\begin{figure}[t!h!]
+\begin{figure}[h!]
 \centering
 \includegraphics[width=0.3\textwidth]{diffint.png}
 \caption{Segmentation for union and intersection of channels having reverse contrast.. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} +
@@ -583,16 +583,25 @@ the image in Figure~\ref{fig:cv_eg7} which the Chan-Vese model was not able to c
 Green, Blue, and performed the union on the three channels. The results are shown in Figure~\ref{fig:flowers}. The complete contour of the flowers was
 successfully detected unlike that obtained in Figure~\ref{fig:cv_eg7}.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.4\textwidth]{sc_blurry.png}
+\includegraphics[width=0.3\textwidth]{sc_blurry.png}
 \caption{Successful union with blurred images. Top: the evolving curve for $A_1 \cup A_2$
 (in red) over time where the first
 image shows the initial
 contour. Bottom: evolving segmentation over time until the union is detected. Size = 200 x 200, $\phi_{0}(x,y) = - \sqrt{(x - 100)^2 + (y - 100)^2)} +
 50$, no reinitialization, cpu = 6 s, iterations = 11.}
 \label{fig:sc_blurry}
-\end{figure}
+\end{figure*}
+
+\begin{figure*}[t!h!]
+\centering
+\includegraphics[width=0.5\textwidth]{flowers.png}
+\caption{Ability to detect the full contour on a colored image with low variation between foreground and background by taking the union of the RGB channels.
+Full contour detected as opposed to Figure~\ref{fig:cv_eg7}. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, no reinitialization,
+size = cpu = 1.73 sec, iterations = 7.}
+\label{fig:flowers}
+\end{figure*}
 
 
 
@@ -609,14 +618,7 @@ segmentation of an object in a noisy image for different values for $\mu$. The r
 that
 this challenge kept us busy for over two days, after which we decided we should move on to other parts of the project.
 
-\begin{figure*}[t!]
-\centering
-\includegraphics[width=12cm]{flowers.png}
-\caption{Ability to detect the full contour on a colored image with low variation between foreground and background by taking the union of the RGB channels.
-Full contour detected as opposed to Figure~\ref{fig:cv_eg7}. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, no reinitialization,
-size = cpu = 1.73 sec, iterations = 7.}
-\label{fig:flowers}
-\end{figure*}
+
 
 \begin{figure}[t]
 \centering
