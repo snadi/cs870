@@ -1,14 +1,10 @@
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
 \usepackage{cvpr}
-\usepackage{cite}
-\usepackage{url}
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{amsmath}
-\usepackage{array}
-\usepackage{color}
-\usepackage{balance}
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=true]{hyperref}
 
 \cvprfinalcopy
 \ifcvprfinal\pagestyle{empty}\fi
@@ -38,12 +34,12 @@ detection of holes, performance with blurred and noisy images, and response to s
 
 \section{Introduction}
 Image segmentation or boundary detection is a very important problem in the area of Image Processing, and has received a lot of attention in the past. The
-classical Active Contour model (or Snakes) proposed by Kass et al.~\cite{kass1988snakes} was the first model to use the idea of energy minimization to attract
+classical Active Contour model (or Snakes) proposed by Kass et al. \cite{kass1988snakes} was the first model to use the idea of energy minimization to attract
 a contour to the edges of the objects in an image. The Snakes model was very successful and variations of it very highly adopted later on
 (E.g.~\cite{caselles1997geodesic}. Most of these models used the level set formulation for propagating fronts to evolve the curve. However, these models highly
 depended on curvature motion (motion defined by the gradient of the curve) which led to poor performance in smoothed edges. To overcome these limitations, Chan
 and Vese~\cite{chan2001active} propose an active contour model that does not depend on the edges (i.e the gradient) for propagating the curve to detect the
-boundary of the object. Instead, they use a region-based approach based on the Mumford-Shah model~\cite{mumford1989optimal} to divide the image
+boundary of the object. Instead, they use a region-based approach based on the Mumford-Shah model \cite{mumford1989optimal} to divide the image
 into two regions: one inside the propagating curve, and one outside. The curve is at the boundary of the object if there is no difference in intensities inside
 the curve as well as outside the curve.
 
@@ -641,7 +637,16 @@ other challenges that we faced while implementing both models.
 
 \section{Conclusion}
 \label{sec:concl}
+In this project, we have provided an implementation for the Chan-Vese model for active contours without edges and the Sandberg-Chan logic framework for
+multi-channel images, both written in Matlab. Our experiments have shown that the Chan-Vese model is effective for various types of images. In specific, it is
+useful when an edge-based segmentation is not applicable (i.e. edges do not depend on a gradient). However, our implementation fails to respond to different
+values for the contour length scaling parameter, $\mu$. This affects the ability of our implementation to handle Matlab's \textit{salt \& pepper} noise. On the
+other hand, changing the values for the intensity weight parameters $\lambda_1$ and $\lambda_2$ affects the amount of details obtained inside and outside the
+segmented object respectively.
 
+We have also shown that our implementation for the Sandberg-Chan logic framework handles different logic combinations for multiple channels. We have also
+experimented using it as a segmentation tool for colored images by modeling an input colored images as a 3-channel image (red, green, blue). However, our
+implementation for the \textit{complement} logic operation seems to be missing a hidden trick in the Sandberg-Chan logic framework.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
