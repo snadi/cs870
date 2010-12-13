@@ -1,0 +1,20 @@
+1) Please add the following locations to your Matlab path first:
+===============================================================
+path/to/project/CurveEvolution
+path/to/project/Data
+path/to/project/Helper
+path/to/project/InitialPhi
+path/to/project/Logic
+path/to/project/Tests
+
+
+2) There are two test files in the Tests folder: test1.m and test2.m
+The files can be executed from the Matlab command line or the editor execute button.
+
+a) test1.m
+==========
+This file is designed to test the implementation of the Chan-Vese model. It has all the parameters set inside it. The input image to this file is brain.jpg, so the output should show a brain segmentation. It should take around 2 seconds to run this test.
+
+b) test2.m
+==========
+This file is designed to test the implementation of the Sandberg-Chan logic framework. It has all the parameters set inside it. There are two input channels to this file: donut1.jpg and donut2.jpg. The first is a donut image with an occluded part at the top left, the second is the same image donut with an occluded part at the bottom right. Based on the parameters set, the output should be the intersection of both channels, i.e. a donut image where the two occluded parts are missing. It should take around 13 seconds to run this test.
