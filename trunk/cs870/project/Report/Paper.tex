@@ -241,7 +241,7 @@ Equation~\ref{eqn:cvpde}.  We, first, tried to implement the dirac delta functio
 worse segmentations. Accordingly, we chose to use $|\bigtriangledown\phi|$ instead of the dirac delta function as this
 was indicated as a valid alternative by the authors. To calculate $c_{1}$ and $c_{2}$, we simply calculated the mean of the values inside $\phi$ (specifically
 where $\phi > 0$) and the mean of the values outside $\phi$ (specifically where $\phi < 0$) respectively. To actually solve the PDE, we chose to use an explicit
-time stepping scheme for the finite difference discretization. That is, in each time step $\phi^{n+1} = \phi^n + \triangle t*phi_t$. This was simpler to
+time stepping scheme for the finite difference discretization. That is, in each time step $\phi^{n+1} = \phi^n + \triangle t*\phi_t$. This was simpler to
 implement, and although $\triangle t$ must be chosen carefully to satisfy the stability condition ($\triangle t <= (1/imageSize)^2$), we did not suffer from
 performance problems due to this restriction.
 
@@ -664,7 +664,7 @@ of $A_1 \cap A_2$. Bottom: correct and incorrect segmentation respectively}
 \label{fig:sccomp}
 \end{figure}
 
-\subsection{Defining the initial contour $phi_0$}
+\subsection{Defining the initial contour $\phi_0$}
 Both the Chan-Vese model and the Sandberg-Chan model define the initial contour ($\phi_0$) as a signed distance function where $\phi_0$ is positive inside the
 contour $C$, zero on the boundary of $C$ ($\partial C$), and negative outside the contour $C$. Figure~\ref{fig:phinote} illustrates those assumptions.
 
