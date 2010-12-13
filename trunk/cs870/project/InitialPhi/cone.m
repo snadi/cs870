@@ -24,3 +24,4 @@ axes = cell(2, 1);
 % The equation is flipped because phi should be positive inside, and negative
 % outside.
 phi = radius - sqrt( (axes{1} - center(1)).^2 + (axes{2} - center(2)).^2 );
+% phi = sqrt( (axes{1} - center(1)).^2 + (axes{2} - center(2)).^2 ) - radius;
