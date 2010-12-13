@@ -32,4 +32,3 @@ phi_t =  normOfGradient * ...
 
 % Update phi
 resultingPhi = phi + deltaT * phi_t;
-
