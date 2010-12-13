@@ -1,12 +1,9 @@
-
-
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
 \usepackage{cvpr}
 \usepackage{cite}
 \usepackage{url}
 \usepackage{graphicx}
-\usepackage{clrscode}
 \usepackage{tabularx}
 \usepackage{amsmath}
 \usepackage{array}
@@ -26,15 +23,17 @@ David R. Cheriton School of Computer Science\\
 University of Waterloo\\
 }
 
-
-
 \maketitle
 
 \begin{abstract}
-%\boldmath
-The abstract goes here.
+In this project, we provide an implementation for the Chan-Vese model for active contours without edges, and the Sandberg-Chan logic framework for active
+contours on multi-channel images. The Chan-Vese model is a special case of the more general Mumford-Shah functional for segmentation and level sets. It differs
+from other active contour modesl in that it does not depend on the gradient of the contour ($\phi$), therefore it is more capable of detecting objects whose
+boundaries may not be defined by a gradient (e.g. blurry images, noisy images). The Sandberg-Chan model builds on top of the Chan-Vese model by allowing the
+contour to evolve simultaneously on multiple channels. It also offers a set of logic operations that can be applied to those channels (union, intersection,
+complement, and their combinations). We evaluate our implementation based on several criteria, such as: independence of initial curve position, successful
+detection of holes, performance with blurred and noisy images, and response to scaling parameters.
 \end{abstract}
-
 
 
 \section{Introduction}
@@ -63,7 +62,6 @@ provides brief background about each of the two models implemented in this paper
 section, we explain how we implemented the models and any variations from the original papers. Section~\ref{sec:results} explains our evaluation criteria, and
 presents the results we obtained. Section~\ref{sec:difficulties} discusses some of the difficulties we faced, and points out some BLA. Section~\ref{sec:concl}
 concludes this paper by summarizing our findings.
-
 
 \section{Background}
 \label{sec:bg}
@@ -166,7 +164,7 @@ f_{\cup} = (z_{1} . z_{2})^{1/2}
 
 \begin{equation}
 \label{eqn:finters}
-f_{\cup} = 1 = ((1 - z_{1}) .(1-  z_{2}))^{1/2}
+f_{\cap} = 1 = ((1 - z_{1}) .(1-  z_{2}))^{1/2}
 \end{equation}
 
 Based on these functions, the Euler-Lagrange equation for any logic operation is shown in Equation~\ref{eqn:svpde}. According to the desired logic operation,
@@ -471,8 +469,6 @@ two channels, the complete family image is recovered.
 \label{fig:donutlogic}
 \end{figure*}
 
-
-
 \begin{figure*}[t]
 \centering
 \includegraphics[width=12cm]{flowers.png}
@@ -548,16 +544,100 @@ successfully detected unlike that obtained in Figure~\ref{fig:cv_eg7}.
 
 \section{Difficulties and Discussion}
 \label{sec:difficulties}
+We have faced many challenges throughout the implementation of this project. Some of the challenges caused major delays in the implementation cycle and hindered
+us from improving our code and adding more features to it. 
 
+\subsection{Varying $\mu$}
+$\mu$ is a scaling factor that is used in both the Chan-Vese model and the Sandberg-Chan model to control the weight given to the length of the contour.
+Therefore, varying the value of $\mu$ will affect the ability to segment objects in noisy images, especially when the noise is similar to Matlab's \textit{salt
+and pepper} noise. However, varying $\mu$ in our implementation does not really have any impact on the length of the contour. Figure [\ref{fig:cvmu}] shows the
+segmentation of an object in a noisy for different values for $\mu$. The resulting segmentation is the same for all values of $\mu$. It is worth noting that
+this challenge kept us busy for over two days, after which we decided we should move on to other parts of the project.
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{cvmu.png}
+\caption{$\mu$ does not have any effect on the length of the contour. \textit{Salt and pepper} noise was added to the original image for testing purposes. The
+figure shows the segmentation for the same image for various values of $\mu$.}
+\label{fig:cvmu}
+\end{figure*}
+
+\subsection{Computing the complement}
+The Sandberg-Chan model supports the complement logic operator, so one can segment the logic object ($A \cap \neg B$) (i.e. segment what is in channel A and not
+in channel B). The model defines the complement of the object in channel \textit{i} as follows:
+
+\begin{equation}
+\label{eqn:complement}
+\begin{align*}
+{z_{i}}^{in^{'}} = 1 - {z_{i}}^{in}, \\
+{z_{i}}^{out^{'}} = 1 - {z_{i}}^{out}.
+\end{align*}
+\end{equation}
+
+Although the definition is very simple, it does not work in practice. We implemented the complement logic operator as defined in Equation
+[\ref{eqn:complement}], and the segmentation does not stop at the required result. It rather keeps evolving after reaching the required solution, then keeps
+flipping between two segmentations: the correct segmentation, and the segmentation of $A \cap B$. Figure [\ref{fig:sccomp}] shows this scenrio. We tried to
+debug the reasons for this problem for three days.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{sccomp.png}
+\caption{The complement operator causes the contour to go through an infinite loop between two segmentations: the correct segmentation, and the segmentation
+of $A \cap B$.}
+\label{fig:sccomp}
+\end{figure*}
+
+\subsection{Defining the initial contour ($\phi_0$)}
+Both the Chan-Vese model and the Sandberg-Chan model defines the initial contour $\phi_0$ as a signed distance function where $\phi_0$ is positive inside the
+contour $C$, zero on the boundary of $C$ (\partial C), and negative outside the contour $C$. Figure [\ref{fig:phinote}] illustrates those assumptions.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{phinote.png}
+\caption{Assumptions about the way $\phi_0$ is defined.}
+\label{fig:phinote}
+\end{figure}
+
+Since we model our initial contour as a circle, we have to modify the regular equation of the circle to match those assumption. Therefore, we initialize
+$\phi_0$ as follows:
+
+\begin{equation}
+\label{eqn:phinote}
+\phi_{0} (x, y) = radius - \sqrt{ (x - c_x)^2 + (y - c_y)^2 },
+\end{equation}
+where $c_x$ and $c_y$ are the x-coordinate and y-coordinate of the center of the circle respectively.
+
+Although this definition of $\phi_0$ is compatible with most of the images we used to test our implementation, it did fail to correctly segment the objects in
+some images. In fact, the results were the opposite of the used logic operator (i.e. the output is the intersection of the channels, while it should be the
+union). After spending quite sometime to resolve this problem and checking what might be the source of the error, we tried using the regular equation of a
+circle to initialize $\phi_0$ (Equation [\ref{eq:phinotenormal]}). We were very intrigued to notice that this modification resulted in the correct segmentation
+of the input channels. Figure [\ref{fig:phidef}] shows the final segmentation using both definitions for $\phi_0$.
+
+\begin{equation}
+\label{eqn:phinotenormal}
+\phi_{0} (x, y) = \sqrt{ (x - c_x)^2 + (y - c_y)^2 } - radius,
+\end{equation}
+where $c_x$ and $c_y$ are the x-coordinate and y-coordinate of the center of the circle respectively.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{phidef.png}
+\caption{}
+\label{fig:phidef}
+\end{figure*}
+
+\subsection{Mistyped Equations}
+As previously mentiond in Section [\ref{sec:sandberg-chan}], there is a typo in the equations that define $z_in$ and $z_out$ in the Sandberg-Chan model
+(equation 3 in thier paper). In addition, they have another typo in the expansion of the the Eular-Lagrange equation for the PDE that models the problem. Both
+typos consumed over a week of our time until we were able to find out what are the correct equations in both cases. We could have spent this time overcoming
+other challenges that we faced while implementing both models.
 
 \section{Conclusion}
 \label{sec:concl}
-The conclusion goes here.
+
 
 
 \bibliographystyle{IEEEtran}
-
 \bibliography{references}
 
 
