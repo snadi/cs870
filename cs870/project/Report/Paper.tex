@@ -209,7 +209,8 @@ In order to make sure we correctly implemented the models, we had several evalua
 the goals of each. Some of these criteria apply for both models, while other apply to one or the other. For the rest of this section, we proceed by presenting
 our experimental results for both models. For each model, we proceed in the order of these criteria starting with the simplest
 cases, and incrementally challenging the model. Unless otherwise stated, all the segmentation was performed on a gray scale version of the original image. All
-the images in the Chan-Vese model were run on a BLA COMPUTER and all the images in the Sandberg-Chan model were run on a BLA computer.
+the images in the Chan-Vese model were run on a BLA COMPUTER and all the images in the Sandberg-Chan model were run on a BLA computer. As shown in the results,
+we tried different image sizes to ensure that our solution converges.
 
 \begin{table*}[h!t!]
 \centering
@@ -369,14 +370,16 @@ contour.Bottom: evolving segmentation over time until the object is detected. Si
 \begin{figure}[t]
 \centering
 \includegraphics[width=7cm]{sc_unionsimple.png}
-\caption{}
+\caption{Simple union example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.32 s, 
+iterations = 2.}
 \label{fig:sc_unionsimple}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=7cm]{sc_intersectionsimple.png}
-\caption{}
+\caption{Simple intersection example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.83 s, 
+iterations = 2.}
 \label{fig:sc_intersectionsimple}
 \end{figure}
 
@@ -421,14 +424,16 @@ very extreme case), we can see that parts of outside boundaries are not well det
 \begin{figure}[t]
 \centering
 \includegraphics[width=7cm]{threech.png}
-\caption{}
+\caption{Logic operations performed on three channels. The figure shows the final segmentation in each case. Size = 200 * 200. $\phi_{0}(x,y) = - \sqrt{(x -
+100)^2 + (y - 100)^2)} + 50$, $\mu = 0.1$, no reinitialization. For union: cpu = 3.92 sec and iterations = 6. For intersection: cpu = 3.11 sec and iterations =
+5. For intersection then union: cpu = 1.24 and iterations = 4.}
 \label{fig:threech}
 \end{figure}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=12cm]{cv_eg12.png}
-\caption{Effect of varying $\lambda_1$ which controls how much details are detected inside the contour. The figure shows the segmentation in each case.}
+\caption{Effect of varying $\lambda_1$ which controls how much details are detected inside the contour. The figure shows the final segmentation in each case.}
 \label{fig:cv_eg12}
 \end{figure*}
 
@@ -441,7 +446,7 @@ to $\mu$. We give more details about how we tried to handle this, and why we bel
 \subsection{Sandberg-Chan Model Results}
 
 For the Sandberg-Chan model, the successful detection of boundaries criteria is implicitly included in the logic operations functionality. We therefore, show
-the other criteria.
+the other criteria. Unless otherwise specified, $\mu = 0.1$ and $\lambda = 255*255$ in the experiments below.
 
 
 \subsubsection*{Logic Operators: union and intersection}
@@ -461,7 +466,8 @@ two channels, the complete family image is recovered.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=12cm]{donutlogic.png}
-\caption{}
+\caption{Performing union and intersection on images with holes. Size = 300 * 300. $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} +
+75$, no reinitialization. For union: cpu = 8.63 sec and iterations = 10. For intersection: cpu = 7.68 sec and iterations = 10.}
 \label{fig:donutlogic}
 \end{figure*}
 
@@ -470,35 +476,84 @@ two channels, the complete family image is recovered.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=12cm]{flowers.png}
-\caption{}
-\label{fig:threech}
+\caption{Ability to detect the full contour on a colored image with low variation between foreground and background by taking the union of the RGB channels.
+Full contour detected as opposed to Figure~\ref{fig:cv_eg7}. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, no reinitialization,
+size = cpu = 1.73 sec, iterations = 7.}
+\label{fig:flowers}
 \end{figure*}
 
 
 \subsubsection*{Independence of Initial Curve Position}
 
-Similar to the previous model, we needed to ensure that the position of the initial curve does not alter our results. Figure~\ref{fig:sc_initialcurve} shows
+Similar to the previous model, we needed to ensure that the position of the initial curve does not alter our results. Figure~\ref{fig:sc_position} shows
 the segmentation results obtained for the same image used in Figure~\ref{fig:sc_unionsimple}, but with a different position for the initial curve.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=7cm]{sc_position.png}
+\caption{Same example shown in Figure~\ref{fig:sc_unionsimple}, but with different initial curve position. Initial curve does not overlap with either objects.
+Same segmentation is obtained. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 4.43s, 4
+iterations.}
+\label{fig:sc_position}
+\end{figure}
 
 \subsubsection*{Reasonable Performance with Blurred Images}
 
+Figure~\ref{fig:sc_blurry} shows the union performed on two blurry triangles. We blurred the triangles used in Figure~\ref{fig:threech}, and performed the
+union operation on them. The full triangle was segmented (the union) despite the blurred edges.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{cv_eg11.png}
+\caption{Successful union with blurred images. Top: the evolving curve for $A_1 \cup A_2$
+(in red) over time where the first
+image shows the initial
+contour. Bottom: evolving segmentation over time until the union is detected. Size = 200 x 200, $\phi_{0}(x,y) = - \sqrt{(x - 100)^2 + (y - 100)^2)} +
+50$, no reinitialization, cpu = 6 s, took 11 iterations.}
+\label{fig:sc_blurry}
+\end{figure*}
+
 \subsubsection*{Reasonable Performance with Noisy Images}
+
+To be able to perform well in noisy images, $\lambda$ must be decreased in order to ignore the noise. We added 'Salt \& pepper' noise with a variation of 0.1 to
+the images shown in Figure~\ref{fig:sc_noisy}, and tried to perform the union. In the first case shown, we set $\lambda = 255*255$ which is the normal setting
+used for clean images, and in the second case, we set $\lambda = 25$. We show the final segmentation for both cases. In the first case, the noise was detected,
+while in the second case, the noise was ignored since $\lambda$ was small. This shows that we also satisfy the response to parameter settings criteria since
+$\lambda$ was the only variation mentioned by the authors in the original paper~\cite{sandberg2005logic}. We note that the contour evolved much more slowly
+with a smalled $\lambda$, and thus took much more CPU time, and a larger number of iterations.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=12cm]{sc_noisy.png}
+\caption{Same image as Figure~\ref{fig:threech}, but with 'salt \& pepper' noise with a variation of 0.1. Decreasing $\lambda$ from 255*255 to 125 allowed less
+noise to be detected. Size = 200 x 200, $\phi_{0}(x,y) = - \sqrt{(x - 100)^2 + (y - 100)^2)} +
+50$, no reinitialization. Cpu = 3.17 sec and iterations = 5 when $\lambda = 255*255$. Cpu = 146.46 sec and iterations = 125 when $\lambda =
+125$.}
+\label{fig:sc_noisy}
+\end{figure*}
 
 \subsubsection*{Complement}
 
-\subsubsection*{Successful Response to Parameter Settings}
+Unfortunately, the complement did not work properly in our implementation. We closely followed the definitions in the original paper where $z_i^{in'} = 1 -
+z_i^{in}$ and $z_i^{out'} = 1 - z_i^{out}$. The results was actually successfully detected, but continuous flickering occurred, and the curve did not stop in
+one position. We discuss this results in more details in Section~\ref{sec:disc}.
 
 \subsubsection*{Other Tests}
+
+Since the Sandberg-Chan model can successfully detect objects in one channel which are not in another when performing the union, we were curious to know
+whether this would allow us to perform successful segmentation on colored images by combining the information in the three channels R,G,B. Accordingly, we used
+the image in Figure~\ref{fig:cv_eg7} which the Chan-Vese model was not able to completely segment. We extracted three channels from the colored image: Red,
+Green, Black, and performed the union on the three channels. The results are shown in Figure~\ref{fig:flowers}. The complete contour of the flowers was
+successfully detected unlike that obtained in Figure~\ref{fig:cv_eg7}.
 
 \section{Difficulties and Discussion}
 \label{sec:difficulties}
 
+
+
 \section{Conclusion}
 \label{sec:concl}
 The conclusion goes here.
-
-
 
 
 \bibliographystyle{IEEEtran}
