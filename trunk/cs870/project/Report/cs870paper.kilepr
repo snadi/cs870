@@ -34,10 +34,10 @@ ReadWrite=true
 
 [item:Paper.tex]
 archive=true
-column=131
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=417
+line=6
 mode=LaTeX
 open=true
 order=1
@@ -54,18 +54,18 @@ order=-1
 
 [item:references.bib]
 archive=true
-column=0
+column=30
 encoding=UTF-8
 highlight=BibTeX
-line=60
+line=13
 mode=BibTeX
 open=true
 order=0
 
 [view-settings,view=0,item:Paper.tex]
-CursorColumn=131
-CursorLine=417
+CursorColumn=0
+CursorLine=6
 
 [view-settings,view=0,item:references.bib]
-CursorColumn=0
-CursorLine=60
+CursorColumn=30
+CursorLine=13

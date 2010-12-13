@@ -469,6 +469,13 @@ two channels, the complete family image is recovered.
 \label{fig:donutlogic}
 \end{figure*}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=7cm]{family.png}
+\caption{Combining iterations = 7. union 4.01 s intersection 4.12 s}
+\label{fig:donutlogic}
+\end{figure}
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=12cm]{flowers.png}
@@ -557,8 +564,8 @@ this challenge kept us busy for over two days, after which we decided we should 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{cvmu.png}
-\caption{$\mu$ does not have any effect on the length of the contour. \textit{Salt and pepper} noise was added to the original image for testing purposes. The
-figure shows the segmentation for the same image for various values of $\mu$.}
+\caption{$\mu$ does not have any effect on the length of the contour. \textit{Salt and pepper} noise was added to the original image for testing
+purposes. Top: original image with noise. Bottom: segmentation for various values of $\mu$.}
 \label{fig:cvmu}
 \end{figure*}
 
@@ -583,13 +590,13 @@ debug the reasons for this problem for three days.
 \centering
 \includegraphics[width=\textwidth]{sccomp.png}
 \caption{The complement operator causes the contour to go through an infinite loop between two segmentations: the correct segmentation, and the segmentation
-of $A \cap B$.}
+of $A_1 \cap A_2$. Bottom: correct and incorrect segmentation respectively}
 \label{fig:sccomp}
 \end{figure*}
 
 \subsection{Defining the initial contour ($\phi_0$)}
 Both the Chan-Vese model and the Sandberg-Chan model defines the initial contour $\phi_0$ as a signed distance function where $\phi_0$ is positive inside the
-contour $C$, zero on the boundary of $C$ (\partial C), and negative outside the contour $C$. Figure [\ref{fig:phinote}] illustrates those assumptions.
+contour $C$, zero on the boundary of $C$ ($\partial C$), and negative outside the contour $C$. Figure [\ref{fig:phinote}] illustrates those assumptions.
 
 \begin{figure}[t]
 \centering
@@ -634,7 +641,6 @@ other challenges that we faced while implementing both models.
 
 \section{Conclusion}
 \label{sec:concl}
-
 
 
 \bibliographystyle{IEEEtran}
