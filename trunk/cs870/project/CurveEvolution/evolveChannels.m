@@ -52,7 +52,7 @@ for n=1:iterations
     title('Segmentation');
     hold on;
 
-    % Plot the contour on the image
+	% Plot the contour on the image
     contour(phi, [0 0], 'r', 'LineWidth', 1);
     title(strcat('Iteration: ', num2str(n)));
     drawnow;
