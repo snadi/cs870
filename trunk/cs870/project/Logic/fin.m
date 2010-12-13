@@ -16,7 +16,7 @@ function output = fin(phi, logicop, complement, varargin)
 
 switch logicop
     case 'union'        
-        output = scunion(phi, 'inside', complement, varargin{:});               
+        output = scunion(phi, 'inside', complement, varargin{:});
     case 'intersection'        
         output = scintersection(phi, 'inside', complement, varargin{:});
 end
