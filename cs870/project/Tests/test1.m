@@ -6,7 +6,7 @@ startTime = cputime;
 
 iterations = 100;
 
-image = readGSImage('multiple.jpg', true);
+image = readGSImage('brain.jpg', false);
 imageSize = size(image, 1);
 
 phi0 = cone(floor(imageSize/4), [floor(imageSize/2) floor(imageSize/2)], size(image));

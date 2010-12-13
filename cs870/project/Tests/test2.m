@@ -3,17 +3,13 @@ function test2()
 
 startTime = cputime;
 
-iterations = 10;
+iterations = 100;
 
-image = imread('flowers.jpg');
-% image = readGSImage('image.jpg');
+image = readGSImage('donut.jpg', false);
 imageSize = size(image, 1);
 
-[r g b] = readRGBImage('flowers.jpg');
-
-% image1 = readGSImage('image1.jpg');
-% image2 = readGSImage('image2.jpg');
-% image3 = readGSImage('image3.jpg');
+image1 = readGSImage('donut1.jpg', false);
+image2 = readGSImage('donut2.jpg', false);
 
 phi0 = cone(imageSize/4, [imageSize/2 imageSize/2], size(image));
 
@@ -21,14 +17,13 @@ mu = 0.01;
 
 lambda = 255*255;
 
-logicop = 'union';
+logicop = 'intersection';
 
 doReinit = false;
 
 complement = 0;
 
-% evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, complement, image1, image2, image3);
-evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, complement, r, g, b);
+evolveChannels(iterations, phi0, mu, lambda, logicop, image, doReinit, complement, image1, image2);
 
 timeTaken = cputime - startTime;
 
