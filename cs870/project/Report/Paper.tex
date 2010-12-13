@@ -1,10 +1,22 @@
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
+
 \usepackage{cvpr}
+\usepackage{times}
 \usepackage{graphicx}
-\usepackage{tabularx}
-\usepackage{amsmath}
-\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=true]{hyperref}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{url}
+
+
+
+\cvprfinalcopy % *** Uncomment this line for the final submission
+
+\def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+\ifcvprfinal\pagestyle{empty}\fi
 
 \cvprfinalcopy
 \ifcvprfinal\pagestyle{empty}\fi
@@ -23,8 +35,9 @@ University of Waterloo\\
 
 \begin{abstract}
 In this project, we provide an implementation for the Chan-Vese model for active contours without edges, and the Sandberg-Chan logic framework for active
-contours on multi-channel images. The Chan-Vese model is a special case of the more general Mumford-Shah functional for segmentation and level sets. It differs
-from other active contour modesl in that it does not depend on the gradient of the contour ($\phi$), therefore it is more capable of detecting objects whose
+contours on multi-channel images. The Chan-Vese model is a special case of the more general Mumford-Shah functional for segmentation and level sets. It
+differs
+from other active contour models in that it does not depend on the gradient of the contour ($\phi$), therefore it is more capable of detecting objects whose
 boundaries may not be defined by a gradient (e.g. blurry images, noisy images). The Sandberg-Chan model builds on top of the Chan-Vese model by allowing the
 contour to evolve simultaneously on multiple channels. It also offers a set of logic operations that can be applied to those channels (union, intersection,
 complement, and their combinations). We evaluate our implementation based on several criteria, such as: independence of initial curve position, successful
@@ -34,7 +47,7 @@ detection of holes, performance with blurred and noisy images, and response to s
 
 \section{Introduction}
 Image segmentation or boundary detection is a very important problem in the area of Image Processing, and has received a lot of attention in the past. The
-classical Active Contour model (or Snakes) proposed by Kass et al. \cite{kass1988snakes} was the first model to use the idea of energy minimization to attract
+classical Active Contour model (or Snakes) proposed by Kass et al.~\cite{kass1988snakes} was the first model to use the idea of energy minimization to attract
 a contour to the edges of the objects in an image. The Snakes model was very successful and variations of it very highly adopted later on
 (E.g.~\cite{caselles1997geodesic}. Most of these models used the level set formulation for propagating fronts to evolve the curve. However, these models highly
 depended on curvature motion (motion defined by the gradient of the curve) which led to poor performance in smoothed edges. To overcome these limitations, Chan
@@ -48,9 +61,17 @@ detecting objects even in noisy or blurry images. It could also detect holes in 
 this work, Sandberg and Chan~\cite{sandberg2005logic} propose a logic framework (referred to as the Sandberg-Chan model throughout the rest of this
 paper) that  performs logical operations on multiple images according to the curve propagation proposed in the Chan-Vese model. To achieve that, previous models
 usually had two steps. They would either first segment the object in each channel separately then combine the segmented objects according to the logic operation
-through bitwise operations (CITE) or they would apply logic operations to the different images then segment the resulting image (CITE). The first approach is
+through bitwise operations (E.g.~\cite{sapiro1997color, zhu2002region}) or they would apply logic operations to the different images then segment the resulting
+image. The first approach is
 very costly, and the second approach requires a lot of prior knowledge about the intensities of each image. To overcome these drawbacks, the Sandberg-Chan
 model is based on the idea of fitting a single contour to the object on all channels according to the logic operator, and based on regions.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=6cm]{explaining.png}
+\caption{Region Based Model}
+\label{fig:region}
+\end{figure}
 
 In this paper, we report on our findings after implementing each of these models. We implemented both models in Matlab, and experimented with several images.
 In this paper, we explain the details of our implementation as well as our results. The rest of this paper is organized as follows: Section~\ref{sec:bg} first
@@ -61,6 +82,7 @@ concludes this paper by summarizing our findings.
 
 \section{Background}
 \label{sec:bg}
+
 
 \subsection{Chan-Vese Model}
 \label{sec:chan-vese}
@@ -85,14 +107,12 @@ More formally, the Euler-Lagrange equation (as derived in the original paper) re
 \lambda_{1}(u_{0} - c_{1})^2 +\lambda_{2}(u_{0} - c_{2})^2] 
 \end{equation}
 
-\begin{figure}[t]
+\begin{figure}[t!]
 \centering
-\includegraphics[width=6cm]{explaining.png}
-\caption{Region Based Model}
-\label{fig:region}
+\includegraphics[width=6cm]{fitting.png}
+\caption{Chan-Vese Curve Fitting}
+\label{fig:fitting}
 \end{figure}
-
-(REST OF EQUATION HERE)
 
 The parameter $\mu$ is a scaling parameter for the length of the curve represented in terms of curvature. The smalled $\mu$ is, the more the length of the curve
 can increase without penalizing the minimization. This allows the model to detect smalled objects and holes. The larger $\mu$ is, the less freedom there is for
@@ -102,9 +122,18 @@ according to the objects that need to be detected. Finally, $\lambda_{1}$ and $\
 outside the curve respectively. Since we want to give both forces equal weight, the authors set $\lambda_{1} = \lambda_{2} = 1$ in all their experiments.
 
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.7\textwidth]{logicop.png}
+\caption{Region Based View Union}
+\label{fig:logic-op}
+\end{figure*}
+
 
 \subsection{Sandberg-Chan Model}
 \label{sec:sandberg-chan}
+
+
 
 The main goal of the Sandberg-Chan model~\cite{sandberg2005logic} is to perform logic operations on a combination of different images accurately and
 efficiently. For example, finding the union of two images where different parts of the object are occluded in each image so that a complete object can be
@@ -117,12 +146,7 @@ Similarly, the intersection of two images would be the intersection of the insid
 irrespective of the object's intensity outside versus inside, we should consider \textit{both} the logical operation required for the region inside the object
 as well as that outside.
 
-\begin{figure}[t!]
-\centering
-\includegraphics[width=6cm]{fitting.png}
-\caption{Chan-Vese Curve Fitting}
-\label{fig:fitting}
-\end{figure}
+
 
 More formally, the authors define two logic variables $z_{i}^{in}$ and $z_{i}^{out}$ to denote whether a point $(x,y)$ should be in the moving curve C or not
 with respect to image i. Since we are trying to minimize the fitting of the curve, they use 0 to denote true and 1 to denote false (the reverse of the usual
@@ -132,12 +156,6 @@ the Chan-Vese model. We note here that in the original paper there was a typo in
 instead of the maximum intensity squared. However, in order to have $z_{in}$ and $z_{out}$ have values from 0 to 1 that represent logic values, we need to
 divide by the maximum intensity squared. The equations shown below have been corrected for that.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=12cm]{logicop.png}
-\caption{Region Based View Union}
-\label{fig:logic-op}
-\end{figure*}
 
 \begin{equation}
 \label{eqn:zin}
@@ -167,44 +185,6 @@ Based on these functions, the Euler-Lagrange equation for any logic operation is
 $f_{in}$ and $f_{out}$ will be specified accordingly. For example, if we are doing the union of the images, then we will need to perform a union operation on
 the insides. Thus, $f_{in}$ will be replaced by Equation~\ref{eqn:funion}. Similarly, we will need to do the intersection of the outsides so $f_{out}$ will be
 replaced by Equation~\ref{eqn:finters}.
-
-\begin{equation}
-\label{eqn:svpde}
-\frac{\partial{\phi}}{\partial{t}} = \delta(\phi)[\mu\bigtriangledown(\frac{\bigtriangledown \phi}{|\bigtriangledown \phi|})  - \lambda(f_{in}(z_{1}^{in}, ...,
-z_{n}^{in}) - f_{out}(z_{1}^{out}, ..., z_{n}^{out})
-\end{equation}
-
-with the boundary condition
-
-$\frac{\delta(\phi)}{|\bigtriangledown\phi|}\frac{\partial\phi}{\partial n^{\rightarrow}} = 0$
-
-\section{Implementation}
-\label{sec:implementation}
-
-During implementation, we tried to stick to the authors' formulas and guidelines as much as possible. In this section we explain the choices we made regardless
-implementation. For the chan-vese model, we used the PDE given in Equation 9 in the original paper~\cite{chan2001active} which is shown in
-Equation~\ref{eqn:cvpde}.  We, first, tried to implement the delta dirac function, $\delta_{\varepsilon}\phi$, as defined in the paper. However, we did not
-get non-zero values everywhere as indicated by the authors. Accordingly, we chose to use $|\bigtriangledown\phi|$ instead of the delta dirac function as this
-was indicated as a valid alternative by the authors. To calculate $c_{1}$ and $c_{2}$, we simply calculated the mean of the values inside $\phi$ (specifically
-where $\phi > 0$) and the mean of the values outside $\phi$ (specifically where $\phi < 0$) respectively. To actually solve the PDE, we chose to use an explicit
-time stepping scheme for the finite difference discretization. That is, in each time step $\phi_{t} = \phi + \triangle t*force$. This was simpler to implement,
-and although $\triangle t$ must be chosen carefully to satisfy the stability condition, we did not suffer from performance problems due to this restriction.
-
-For the sandberg-chan model, we used the PDE given in original paper as well, and shown in Equation~\ref{eqn:svpde}. Again, we used $|\bigtriangledown\phi|$
-instead of the dirac function. We calculated $z_{in}$ and $z_{out}$ according to Equations~\ref{eqn:zin, eqn:zout} shown above which have been corrected for
-the typo in the original paper. For all other equations and calculations necessary in the model, we closely followed the original paper in our implementation.
-We also used an explicit time stepping scheme in this model. 
-
-
-\section{Experimental Results}
-\label{sec:results}
-
-In order to make sure we correctly implemented the models, we had several evaluation criteria. Table~\ref{tab:criteria} summarizes these criteria, and explains
-the goals of each. Some of these criteria apply for both models, while other apply to one or the other. For the rest of this section, we proceed by presenting
-our experimental results for both models. For each model, we proceed in the order of these criteria starting with the simplest
-cases, and incrementally challenging the model. Unless otherwise stated, all the segmentation was performed on a gray scale version of the original image. All
-the images in the Chan-Vese model were run on a BLA COMPUTER and all the images in the Sandberg-Chan model were run on a BLA computer. As shown in the results,
-we tried different image sizes to ensure that our solution converges.
 
 \begin{table*}[h!t!]
 \centering
@@ -236,27 +216,58 @@ Parameter Settings & Ability to respond correctly to the different parameter set
 \label{tab:criteria}
 \end{table*}
 
+
+
+\begin{equation}
+\label{eqn:svpde}
+\frac{\partial{\phi}}{\partial{t}} = \delta(\phi)[\mu\bigtriangledown(\frac{\bigtriangledown \phi}{|\bigtriangledown \phi|})  - \lambda(f_{in}(z_{1}^{in}, ...,
+z_{n}^{in}) - f_{out}(z_{1}^{out}, ..., z_{n}^{out})
+\end{equation}
+
+
+\section{Implementation}
+\label{sec:implementation}
+
+During implementation, we tried to stick to the authors' formulas and guidelines as much as possible. In this section we explain the choices we made regardless
+implementation. For the chan-vese model, we used the PDE given in Equation 9 in the original paper~\cite{chan2001active} which is shown in
+Equation~\ref{eqn:cvpde}.  We, first, tried to implement the delta dirac function, $\delta_{\varepsilon}\phi$, as defined in the paper. However, we did not
+get non-zero values everywhere as indicated by the authors. Accordingly, we chose to use $|\bigtriangledown\phi|$ instead of the delta dirac function as this
+was indicated as a valid alternative by the authors. To calculate $c_{1}$ and $c_{2}$, we simply calculated the mean of the values inside $\phi$ (specifically
+where $\phi > 0$) and the mean of the values outside $\phi$ (specifically where $\phi < 0$) respectively. To actually solve the PDE, we chose to use an explicit
+time stepping scheme for the finite difference discretization. That is, in each time step $\phi_{t} = \phi + \triangle t*force$. This was simpler to implement,
+and although $\triangle t$ must be chosen carefully to satisfy the stability condition, we did not suffer from performance problems due to this restriction.
+
+For the sandberg-chan model, we used the PDE given in original paper as well, and shown in Equation~\ref{eqn:svpde}. Again, we used $|\bigtriangledown\phi|$
+instead of the dirac function. We calculated $z_{in}$ and $z_{out}$ according to Equations~\ref{eqn:zin, eqn:zout} shown above which have been corrected for
+the typo in the original paper. For all other equations and calculations necessary in the model, we closely followed the original paper in our implementation.
+We also used an explicit time stepping scheme in this model. 
+
+
+\section{Experimental Results}
+\label{sec:results}
+
+In order to make sure we correctly implemented the models, we had several evaluation criteria. Table~\ref{tab:criteria} summarizes these criteria, and explains
+the goals of each. Some of these criteria apply for both models, while other apply to one or the other. For the rest of this section, we proceed by presenting
+our experimental results for both models. For each model, we proceed in the order of these criteria starting with the simplest
+cases, and incrementally challenging the model. Unless otherwise stated, all the segmentation was performed on a gray scale version of the original image. All
+the images in the Chan-Vese model were run on a BLA COMPUTER and all the images in the Sandberg-Chan model were run on a BLA computer. As shown in the results,
+we tried different image sizes to ensure that our solution converges.
+
+
+
 \subsection{Chan-Vese Model Results}
 
 We present the results from the Chan-Vese model in this section, and show which criteria were met and which were not. Unless otherwise specified, we set
 $\lambda_{1} = \lambda_{2} = 1$.
 
-\subsubsection*{Successful Detection of Boundaries}
-
-Figure~\ref{fig:cv_eg1} shows that the implemented model can successfully detect object boundaries in a simple image. In this case, the evolving curve was
-successfully able to detect the boundaries of both objects. Figure~\ref{fig:cv_eg2} shows a slightly more complicated example where the evolving contour
-successfully detects the contour of the brain. Note that there is a tiny area to the bottom left of the brain that was also successfully detected. To ensure
-that open boundaries (e.g. lines) can also be detected, we used an image with several shapes shown in Figure~\ref{fig:cv_eg8};
-
-
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=11cm]{cv_eg1.png}
+\includegraphics[width=0.5\textwidth]{cv_eg1.png}
 \caption{Successful detection of object boundaries. Top: the evolving curve (in red) over time where the first image shows the initial contour.
 Bottom: evolving segmentation over time until the objects are detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, $\mu =
 0.01$, no reinitialization, cpu = 2.9s, 7 iterations.}
 \label{fig:cv_eg1}
-\end{figure*}
+\end{figure}
 
 \begin{figure*}[t]
 \centering
@@ -266,6 +277,13 @@ Bottom: evolving segmentation over time until the object is detected. Size = 131
 0.01$, no reinitialization, cpu = 1.95 s, took 7 iterations.}
 \label{fig:cv_eg2}
 \end{figure*}
+
+\subsubsection*{Successful Detection of Boundaries}
+
+Figure~\ref{fig:cv_eg1} shows that the implemented model can successfully detect object boundaries in a simple image. In this case, the evolving curve was
+successfully able to detect the boundaries of both objects. Figure~\ref{fig:cv_eg2} shows a slightly more complicated example where the evolving contour
+successfully detects the contour of the brain. Note that there is a tiny area to the bottom left of the brain that was also successfully detected. To ensure
+that open boundaries (e.g. lines) can also be detected, we used an image with several shapes shown in Figure~\ref{fig:cv_eg8};
 
 \begin{figure*}[t]
 \centering
@@ -277,9 +295,28 @@ Bottom: evolving segmentation over time until the object is detected. Size = 300
 \end{figure*}
 
 
+\begin{figure*}[t!]
+\centering
+\includegraphics[width=12cm]{cv_eg3.png}
+\caption{Initial curve position partially overlapping object. Top: the evolving curve (in red) over time where the first image shows the initial contour.
+Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 30)^2 + (y - 30)^2)} + 20$, $\mu =
+0.01$, no reinitialization, cpu = 2.26 s, took 9 iterations.}
+\label{fig:cv_eg3}
+\end{figure*}
+
+\begin{figure*}[t!]
+\centering
+\includegraphics[width=12cm]{cv_eg4.png}
+\caption{Initial curve position not overlapping any area of the object. Top: the evolving curve (in red) over time where the first image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 120)^2 + (y - 120)^2)} + 10$,
+$\mu =0.01$, no reinitialization, cpu = 2.01 s, took 9 iterations.}
+\label{fig:cv_eg4}
+\end{figure*}
+
 \subsubsection*{Independence of Initial Curve Position}
 
-To ensure that the position of the curve does not affect the final segmentation, we tested two other positions for the initial curve for the same brain image
+
+To ensure that the position of the curve does not affect the final segmentation, we tested two other positions for the initial curve for the lesame brain image
 used in Figure~\ref{fig:cv_eg2}. In Figure~\ref{fig:cv_eg2}, the initial contour was completely overlapping the object. Accordingly, we tried two other
 positions. The first one is shown in Figure~\ref{fig:cv_eg3} where the initial contour only partially overlaps with the object. The second one is shown in
 Figure~\ref{fig:cv_eg4} where the initial contour does not overlap the object in any part. Visually, the obtained segmentation was the same with a slightly
@@ -290,21 +327,33 @@ contour lies correctly at the boundaries of the object.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=12cm]{cv_eg3.png}
-\caption{Initial curve position partially overlapping object. Top: the evolving curve (in red) over time where the first image shows the initial contour.
-Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 30)^2 + (y - 30)^2)} + 20$, $\mu =
-0.01$, no reinitialization, cpu = 2.26 s, took 9 iterations.}
-\label{fig:cv_eg3}
+\includegraphics[width=12cm]{cv_eg5.png}
+\caption{Successful detection of holes.  Top: the evolving curve (in red) over time where the first image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 65.5)^2 + (y - 65.5)^2)} + 32.8$,
+$\mu =0.01$, no reinitialization, cpu = 8.12 s, took 12 iterations.}
+\label{fig:cv_eg5}
 \end{figure*}
 
-\begin{figure*}[t]
+\begin{figure*}[t!h!]
 \centering
-\includegraphics[width=12cm]{cv_eg4.png}
-\caption{Initial curve position not overlapping any area of the object. Top: the evolving curve (in red) over time where the first image shows the initial
-contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 120)^2 + (y - 120)^2)} + 10$,
-$\mu =0.01$, no reinitialization, cpu = 2.01 s, took 9 iterations.}
-\label{fig:cv_eg4}
+\includegraphics[width=12cm]{cv_eg6.png}
+\caption{Successful detection of multiple holes.  Top: the evolving curve (in red) over time where the first image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,
+$\mu =0.01$, no reinitialization, cpu = 15.07 s, took 23 iterations.}
+\label{fig:cv_eg6}
 \end{figure*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{cv_eg7.png}
+\caption{Inability to detect low intensities that have not much variation from their background.  Top: the evolving curve (in red) over time where the first
+image shows the initial
+contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,
+$\mu =0.01$, no reinitialization, cpu = 1.35 s, took 6 iterations.}
+\label{fig:cv_eg7}
+\end{figure}
+
+
 
 \subsubsection*{Successful Detection of Holes}
 
@@ -316,40 +365,14 @@ intensities for the curve to change. Another example showing this limitation is 
 intensities are not detected. We will show that we can overcome this limitation with the Sandberg-Chan model for this particular example.
 Figure~\ref{fig:cv_eg6} shows that multiple holes in an image can also be successfully detected.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=12cm]{cv_eg5.png}
-\caption{Successful detection of holes.  Top: the evolving curve (in red) over time where the first image shows the initial
-contour.Bottom: evolving segmentation over time until the object is detected. Size = 131 x 131, $\phi_{0}(x,y) = - \sqrt{(x - 65.5)^2 + (y - 65.5)^2)} + 32.8$,
-$\mu =0.01$, no reinitialization, cpu = 8.12 s, took 12 iterations.}
-\label{fig:cv_eg5}
-\end{figure*}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=12cm]{cv_eg6.png}
-\caption{Successful detection of multiple holes.  Top: the evolving curve (in red) over time where the first image shows the initial
-contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,
-$\mu =0.01$, no reinitialization, cpu = 15.07 s, took 23 iterations.}
-\label{fig:cv_eg6}
-\end{figure*}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=10cm]{cv_eg7.png}
-\caption{Inability to detect low intensities that have not much variation from their background.  Top: the evolving curve (in red) over time where the first
-image shows the initial
-contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,
-$\mu =0.01$, no reinitialization, cpu = 1.35 s, took 6 iterations.}
-\label{fig:cv_eg7}
-\end{figure*}
 
 \subsubsection*{Reasonable Performance with Blurred Images}
+
 
 Figure~\ref{fig:cv_eg9} shows how the contour behaves in a blurry image. The photographer was successfully detected. Additionally, other objects in the image
 such as the tripod were found. However, objects with a very light intensity were again not detected.
 
-\begin{figure*}[t]
+\begin{figure*}[t!]
 \centering
 \includegraphics[width=12cm]{cv_eg9.png}
 \caption{Ability to detect contours in blurry images.  Top: the evolving curve (in red) over time where the first
@@ -361,21 +384,6 @@ contour.Bottom: evolving segmentation over time until the object is detected. Si
 
 \subsubsection*{Reasonable Performance with Noisy Images}
 
-\begin{figure}[t!]
-\centering
-\includegraphics[width=6cm]{sc_unionsimple.png}
-\caption{Simple union example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.32 s, 
-iterations = 2.}
-\label{fig:sc_unionsimple}
-\end{figure}
-
-\begin{figure}[t!]
-\centering
-\includegraphics[width=6cm]{sc_intersectionsimple.png}
-\caption{Simple intersection example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.83 s, 
-iterations = 2.}
-\label{fig:sc_intersectionsimple}
-\end{figure}
 
 Figure~\ref{fig:cv_eg10} shows how two objects in a noisy image were successfully detected. In this image, we added Gaussian noise with mean zero and 0.01
 variance using Matlab's built-in noise function. The image shows that although some of the noise was detected in intermediate iterations, the contour continued
@@ -383,6 +391,7 @@ to evolve until it was only surrounding the desired objects. Unfortunately, the 
 Figure~\ref{fig:cv_eg11} shows that for the same image, but with 'salt \& pepper' noise, the noise was detected as objects. This should not have been the case
 since we used a large value $\mu = 5$ for the length scaling parameter. However, for some reason, varying $\mu$ did not have the intended effect as explained
 in the next section. 
+
 
 \begin{figure*}[t]
 \centering
@@ -394,7 +403,7 @@ contour.Bottom: evolving segmentation over time until the object is detected. Si
 \label{fig:cv_eg10}
 \end{figure*}
 
-\begin{figure*}[t]
+\begin{figure*}[t!]
 \centering
 \includegraphics[width=12cm]{cv_eg11.png}
 \caption{Same image as Figure~\ref{fig:cv_eg10}, but with 'salt \& pepper' noise. Noise was still detected despite increasing $\mu$.  Top: the evolving curve
@@ -415,18 +424,10 @@ $\lambda_1$ and $\lambda_2$. When we set $\lambda_1 = 0.2$ and $\lambda_2 = 1$, 
 we set $\lambda_1 = 2$ and $\lambda_2 = 1$, we can see that more details within the brain are detected. When we set $\lambda_1 = 5$, and $\lambda_2 = 0.01$ (a
 very extreme case), we can see that parts of outside boundaries are not well detected, while many details are detected within the brain.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=7cm]{threech.png}
-\caption{Logic operations performed on three channels. The figure shows the final segmentation in each case. Size = 200 * 200. $\phi_{0}(x,y) = - \sqrt{(x -
-100)^2 + (y - 100)^2)} + 50$, $\mu = 0.1$, no reinitialization. For union: cpu = 3.92 sec and iterations = 6. For intersection: cpu = 3.11 sec and iterations =
-5. For intersection then union: cpu = 1.24 and iterations = 4.}
-\label{fig:threech}
-\end{figure}
 
-\begin{figure}[t]
+\begin{figure}[t!]
 \centering
-\includegraphics[width=7cm]{cv_eg12.png}
+\includegraphics[width=0.5\textwidth]{cv_eg12.png}
 \caption{Effect of varying $\lambda_1$ which controls how much details are detected inside the contour. The figure shows the final segmentation in each case.}
 \label{fig:cv_eg12}
 \end{figure}
@@ -441,6 +442,22 @@ to $\mu$. We give more details about how we tried to handle this, and why we bel
 
 For the Sandberg-Chan model, the successful detection of boundaries criteria is implicitly included in the logic operations functionality. We therefore, show
 the other criteria. Unless otherwise specified, $\mu = 0.1$ and $\lambda = 255*255$ in the experiments below.
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=6cm]{sc_unionsimple.png}
+\caption{Simple union example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.32 s, 
+iterations = 2.}
+\label{fig:sc_unionsimple}
+\end{figure}
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=6cm]{sc_intersectionsimple.png}
+\caption{Simple intersection example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.83 s, 
+iterations = 2.}
+\label{fig:sc_intersectionsimple}
+\end{figure}
 
 
 \subsubsection*{Logic Operators: union and intersection}
@@ -457,7 +474,11 @@ A practical usage of this logic operations framework is to recover missing parts
 show this in Figure~\ref{fig:family} which shows two different version of a family image with a child missing in each image. When the union is applied to these
 two channels, the complete family image is recovered.
 
-\begin{figure*}[t]
+
+
+\subsubsection*{Independence of Initial Curve Position}
+
+\begin{figure*}[t!h!]
 \centering
 \includegraphics[width=12cm]{donutlogic.png}
 \caption{Performing union and intersection on images with holes. Size = 300 * 300. $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} +
@@ -465,31 +486,20 @@ two channels, the complete family image is recovered.
 \label{fig:donutlogic}
 \end{figure*}
 
-\begin{figure}[t]
+\begin{figure}[t!h!]
 \centering
-\includegraphics[width=7cm]{family.png}
-\caption{Combining iterations = 7. union 4.01 s intersection 4.12 s}
-\label{fig:donutlogic}
+\includegraphics[width=0.3\textwidth]{family.png}
+\caption{Combining missing information from two different channels. Size = 114 * 114. $\phi_{0}(x,y) = - \sqrt{(x - 57)^2 + (y - 57)^2)} +
+28.5$, no reinitialization. Union: cpu = 4.01 s and iterations = 7. Intersection: cpu = 4.12 s and iterations = 7.}
+\label{fig:family}
 \end{figure}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=12cm]{flowers.png}
-\caption{Ability to detect the full contour on a colored image with low variation between foreground and background by taking the union of the RGB channels.
-Full contour detected as opposed to Figure~\ref{fig:cv_eg7}. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, no reinitialization,
-size = cpu = 1.73 sec, iterations = 7.}
-\label{fig:flowers}
-\end{figure*}
-
-
-\subsubsection*{Independence of Initial Curve Position}
 
 Similar to the previous model, we needed to ensure that the position of the initial curve does not alter our results. Figure~\ref{fig:sc_position} shows
 the segmentation results obtained for the same image used in Figure~\ref{fig:sc_unionsimple}, but with a different position for the initial curve.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=7cm]{sc_position.png}
+\includegraphics[width=0.3\textwidth]{sc_position.png}
 \caption{Same example shown in Figure~\ref{fig:sc_unionsimple}, but with different initial curve position. Initial curve does not overlap with either objects.
 Same segmentation is obtained. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 4.43s, 4
 iterations.}
@@ -521,9 +531,29 @@ while in the second case, the noise was ignored since $\lambda$ was small. This 
 $\lambda$ was the only variation mentioned by the authors in the original paper~\cite{sandberg2005logic}. We note that the contour evolved much more slowly
 with a smalled $\lambda$, and thus took much more CPU time, and a larger number of iterations.
 
+
+
+\begin{figure*}[t!]
+\centering
+\includegraphics[width=12cm]{flowers.png}
+\caption{Ability to detect the full contour on a colored image with low variation between foreground and background by taking the union of the RGB channels.
+Full contour detected as opposed to Figure~\ref{fig:cv_eg7}. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, no reinitialization,
+size = cpu = 1.73 sec, iterations = 7.}
+\label{fig:flowers}
+\end{figure*}
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=0.3\textwidth]{threech.png}
+\caption{Logic operations performed on three channels. The figure shows the final segmentation in each case. Size = 200 * 200. $\phi_{0}(x,y) = - \sqrt{(x -
+100)^2 + (y - 100)^2)} + 50$, $\mu = 0.1$, no reinitialization. For union: cpu = 3.92 sec and iterations = 6. For intersection: cpu = 3.11 sec and iterations =
+5. For intersection then union: cpu = 1.24 and iterations = 4.}
+\label{fig:threech}
+\end{figure}
+
 \begin{figure}[t]
 \centering
-\includegraphics[width=7cm]{sc_noisy.png}
+\includegraphics[width=0.5\textwidth]{sc_noisy.png}
 \caption{Same image as Figure~\ref{fig:threech}, but with 'salt \& pepper' noise with a variation of 0.1. Decreasing $\lambda$ from 255*255 to 125 allowed less
 noise to be detected. Size = 200 x 200, $\phi_{0}(x,y) = - \sqrt{(x - 100)^2 + (y - 100)^2)} +
 50$, no reinitialization. Cpu = 3.17 sec and iterations = 5 when $\lambda = 255*255$. Cpu = 146.46 sec and iterations = 125 when $\lambda =
@@ -550,20 +580,20 @@ successfully detected unlike that obtained in Figure~\ref{fig:cv_eg7}.
 We have faced many challenges throughout the implementation of this project. Some of the challenges caused major delays in the implementation cycle and hindered
 us from improving our code and adding more features to it. 
 
-\subsection{Varying $\mu$}
+\subsection{Varying mu}
 $\mu$ is a scaling factor that is used in both the Chan-Vese model and the Sandberg-Chan model to control the weight given to the length of the contour.
 Therefore, varying the value of $\mu$ will affect the ability to segment objects in noisy images, especially when the noise is similar to Matlab's \textit{salt
-and pepper} noise. However, varying $\mu$ in our implementation does not really have any impact on the length of the contour. Figure [\ref{fig:cvmu}] shows the
+and pepper} noise. However, varying $\mu$ in our implementation does not really have any impact on the length of the contour. Figure~\ref{fig:cvmu} shows the
 segmentation of an object in a noisy for different values for $\mu$. The resulting segmentation is the same for all values of $\mu$. It is worth noting that
 this challenge kept us busy for over two days, after which we decided we should move on to other parts of the project.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{cvmu.png}
+\includegraphics[width=0.5\textwidth]{cvmu.png}
 \caption{$\mu$ does not have any effect on the length of the contour. \textit{Salt and pepper} noise was added to the original image for testing
 purposes. Top: original image with noise. Bottom: segmentation for various values of $\mu$.}
 \label{fig:cvmu}
-\end{figure*}
+\end{figure}
 
 \subsection{Computing the complement}
 The Sandberg-Chan model supports the complement logic operator, so one can segment the logic object ($A \cap \neg B$) (i.e. segment what is in channel A and not
@@ -571,32 +601,32 @@ in channel B). The model defines the complement of the object in channel \textit
 
 \begin{equation}
 \label{eqn:complement}
-\begin{align*}
+%\begin{align*}
 {z_{i}}^{in^{'}} = 1 - {z_{i}}^{in}, \\
 {z_{i}}^{out^{'}} = 1 - {z_{i}}^{out}.
-\end{align*}
+%\end{align*}
 \end{equation}
 
-Although the definition is very simple, it does not work in practice. We implemented the complement logic operator as defined in Equation
-[\ref{eqn:complement}], and the segmentation does not stop at the required result. It rather keeps evolving after reaching the required solution, then keeps
-flipping between two segmentations: the correct segmentation, and the segmentation of $A \cap B$. Figure [\ref{fig:sccomp}] shows this scenrio. We tried to
+Although the definition is very simple, it does not work in practice. We implemented the complement logic operator as defined in Equation~\ref{eqn:complement},
+and the segmentation does not stop at the required result. It rather keeps evolving after reaching the required solution, then keeps
+flipping between two segmentations: the correct segmentation, and the segmentation of $A \cap B$. Figure~\ref{fig:sccomp} shows this scenrio. We tried to
 debug the reasons for this problem for three days.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{sccomp.png}
-\caption{The complement operator causes the contour to go through an infinite loop between two segmentations: the correct segmentation, and the segmentation
-of $A_1 \cap A_2$. Bottom: correct and incorrect segmentation respectively}
-\label{fig:sccomp}
-\end{figure*}
-
-\subsection{Defining the initial contour ($\phi_0$)}
-Both the Chan-Vese model and the Sandberg-Chan model defines the initial contour $\phi_0$ as a signed distance function where $\phi_0$ is positive inside the
-contour $C$, zero on the boundary of $C$ ($\partial C$), and negative outside the contour $C$. Figure [\ref{fig:phinote}] illustrates those assumptions.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{phinote.png}
+\includegraphics[width=0.25\textwidth]{sccomp.png}
+\caption{The complement operator causes the contour to go through an infinite loop between two segmentations: the correct segmentation, and the segmentation
+of $A_1 \cap A_2$. Bottom: correct and incorrect segmentation respectively}
+\label{fig:sccomp}
+\end{figure}
+
+\subsection{Defining the initial contour phi0}
+Both the Chan-Vese model and the Sandberg-Chan model defines the initial contour $\phi_0$ as a signed distance function where $\phi_0$ is positive inside the
+contour $C$, zero on the boundary of $C$ ($\partial C$), and negative outside the contour $C$. Figure~\ref{fig:phinote} illustrates those assumptions.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{phinote.png}
 \caption{Assumptions about the way $\phi_0$ is defined.}
 \label{fig:phinote}
 \end{figure}
@@ -613,8 +643,8 @@ where $c_x$ and $c_y$ are the x-coordinate and y-coordinate of the center of the
 Although this definition of $\phi_0$ is compatible with most of the images we used to test our implementation, it did fail to correctly segment the objects in
 some images. In fact, the results were the opposite of the used logic operator (i.e. the output is the intersection of the channels, while it should be the
 union). After spending quite sometime to resolve this problem and checking what might be the source of the error, we tried using the regular equation of a
-circle to initialize $\phi_0$ (Equation [\ref{eq:phinotenormal]}). We were very intrigued to notice that this modification resulted in the correct segmentation
-of the input channels. Figure [\ref{fig:phidef}] shows the final segmentation using both definitions for $\phi_0$.
+circle to initialize $\phi_0$ (Equation~\ref{eq:phinotenormal]}). We were very intrigued to notice that this modification resulted in the correct segmentation
+of the input channels. Figure~\ref{fig:phidef} shows the final segmentation using both definitions for $\phi_0$.
 
 \begin{equation}
 \label{eqn:phinotenormal}
@@ -622,15 +652,15 @@ of the input channels. Figure [\ref{fig:phidef}] shows the final segmentation us
 \end{equation}
 where $c_x$ and $c_y$ are the x-coordinate and y-coordinate of the center of the circle respectively.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{phidef.png}
+\includegraphics[width=0.2\textwidth]{phidef.png}
 \caption{}
 \label{fig:phidef}
-\end{figure*}
+\end{figure}
 
 \subsection{Mistyped Equations}
-As previously mentiond in Section [\ref{sec:sandberg-chan}], there is a typo in the equations that define $z_in$ and $z_out$ in the Sandberg-Chan model
+As previously mentiond in Section~\ref{sec:sandberg-chan}, there is a typo in the equations that define $z_in$ and $z_out$ in the Sandberg-Chan model
 (equation 3 in thier paper). In addition, they have another typo in the expansion of the the Eular-Lagrange equation for the PDE that models the problem. Both
 typos consumed over a week of our time until we were able to find out what are the correct equations in both cases. We could have spent this time overcoming
 other challenges that we faced while implementing both models.
@@ -648,8 +678,8 @@ We have also shown that our implementation for the Sandberg-Chan logic framework
 experimented using it as a segmentation tool for colored images by modeling an input colored images as a 3-channel image (red, green, blue). However, our
 implementation for the \textit{complement} logic operation seems to be missing a hidden trick in the Sandberg-Chan logic framework.
 
-\bibliographystyle{IEEEtran}
 \bibliography{references}
+\bibliographystyle{ieee}
 
 
 
