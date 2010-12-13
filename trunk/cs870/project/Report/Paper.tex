@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\title{An Implementation of the Active Contours without Edged model and the Logic Framework for Active contours on multi-channel images}
+\title{An Implementation of the Active Contours without Edges model and the Logic Framework for Active contours on multi-channel images}
 
 \author{Karim Ali and Sarah Nadi\\
 \{karim, snadi\}@cs.uwaterloo.ca \\
@@ -257,7 +257,7 @@ that open boundaries (e.g. lines) can also be detected, we used an image with se
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=12cm]{cv_eg1.png}
+\includegraphics[width=11cm]{cv_eg1.png}
 \caption{Successful detection of object boundaries. Top: the evolving curve (in red) over time where the first image shows the initial contour.
 Bottom: evolving segmentation over time until the objects are detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$, $\mu =
 0.01$, no reinitialization, cpu = 2.9s, 7 iterations.}
@@ -342,7 +342,7 @@ $\mu =0.01$, no reinitialization, cpu = 15.07 s, took 23 iterations.}
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=12cm]{cv_eg7.png}
+\includegraphics[width=10cm]{cv_eg7.png}
 \caption{Inability to detect low intensities that have not much variation from their background.  Top: the evolving curve (in red) over time where the first
 image shows the initial
 contour.Bottom: evolving segmentation over time until the object is detected. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,
@@ -367,17 +367,17 @@ contour.Bottom: evolving segmentation over time until the object is detected. Si
 
 \subsubsection*{Reasonable Performance with Noisy Images}
 
-\begin{figure}[t]
+\begin{figure}[t!]
 \centering
-\includegraphics[width=7cm]{sc_unionsimple.png}
+\includegraphics[width=6cm]{sc_unionsimple.png}
 \caption{Simple union example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.32 s, 
 iterations = 2.}
 \label{fig:sc_unionsimple}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[t!]
 \centering
-\includegraphics[width=7cm]{sc_intersectionsimple.png}
+\includegraphics[width=6cm]{sc_intersectionsimple.png}
 \caption{Simple intersection example. Size = 300 x 300, $\phi_{0}(x,y) = - \sqrt{(x - 150)^2 + (y - 150)^2)} + 75$,  no reinitialization, cpu = 1.83 s, 
 iterations = 2.}
 \label{fig:sc_intersectionsimple}
@@ -417,7 +417,7 @@ There are mainly three parameters in this model that can be varied: $\mu, \lambd
 to be equal to 1 to indicate that we care both about the difference of intensities inside and outside. A smaller weighting for one of them would mean that we
 would ignore some of the variances in intensities in this area. A larger weighting means that we are magnifying the difference in intensities in that area
 (i.e. we want to detect any minor changes). We show an example of these variations in Figure~\ref{fig:cv_eg12} where we vary
-$lambda_1$ and $\lambda_2$. When we set $\lambda_1 = 0.2$ and $\lambda_2 = 1$, less details within the interior of the brain is detected. When
+$\lambda_1$ and $\lambda_2$. When we set $\lambda_1 = 0.2$ and $\lambda_2 = 1$, less details within the interior of the brain is detected. When
 we set $\lambda_1 = 2$ and $\lambda_2 = 1$, we can see that more details within the brain are detected. When we set $\lambda_1 = 5$, and $\lambda_2 = 0.01$ (a
 very extreme case), we can see that parts of outside boundaries are not well detected, while many details are detected within the brain.
 
@@ -430,12 +430,12 @@ very extreme case), we can see that parts of outside boundaries are not well det
 \label{fig:threech}
 \end{figure}
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=12cm]{cv_eg12.png}
+\includegraphics[width=7cm]{cv_eg12.png}
 \caption{Effect of varying $\lambda_1$ which controls how much details are detected inside the contour. The figure shows the final segmentation in each case.}
 \label{fig:cv_eg12}
-\end{figure*}
+\end{figure}
 
 The second parameter, $\mu$ controls how much we allow the length of the curve to increase. If $\mu$ is small, it means that the curve length can increase to
 detect multiple smaller objects without penalizing our minimization problem. On the other hand if $\mu$ is large, it means that any change in the curve length
@@ -522,21 +522,21 @@ while in the second case, the noise was ignored since $\lambda$ was small. This 
 $\lambda$ was the only variation mentioned by the authors in the original paper~\cite{sandberg2005logic}. We note that the contour evolved much more slowly
 with a smalled $\lambda$, and thus took much more CPU time, and a larger number of iterations.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=12cm]{sc_noisy.png}
+\includegraphics[width=7cm]{sc_noisy.png}
 \caption{Same image as Figure~\ref{fig:threech}, but with 'salt \& pepper' noise with a variation of 0.1. Decreasing $\lambda$ from 255*255 to 125 allowed less
 noise to be detected. Size = 200 x 200, $\phi_{0}(x,y) = - \sqrt{(x - 100)^2 + (y - 100)^2)} +
 50$, no reinitialization. Cpu = 3.17 sec and iterations = 5 when $\lambda = 255*255$. Cpu = 146.46 sec and iterations = 125 when $\lambda =
 125$.}
 \label{fig:sc_noisy}
-\end{figure*}
+\end{figure}
 
 \subsubsection*{Complement}
 
 Unfortunately, the complement did not work properly in our implementation. We closely followed the definitions in the original paper where $z_i^{in'} = 1 -
 z_i^{in}$ and $z_i^{out'} = 1 - z_i^{out}$. The results was actually successfully detected, but continuous flickering occurred, and the curve did not stop in
-one position. We discuss this results in more details in Section~\ref{sec:disc}.
+one position. We discuss this results in more details in Section~\ref{sec:difficulties}.
 
 \subsubsection*{Other Tests}
 
