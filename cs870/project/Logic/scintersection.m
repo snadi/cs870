@@ -17,7 +17,7 @@ switch region
     case 'inside'
         for i = 1 : size(varargin, 2)
             if(size(find(complement == i) > 0))
-                output = (1 - sccomplement(zin(varargin{i}, phi))).*output;
+                output = (zin(varargin{i}, phi)).*output;
             else
                 output = (1 - zin(varargin{i}, phi)).*output;
             end
@@ -25,7 +25,7 @@ switch region
     case 'outside'
         for i = 1 : size(varargin, 2)
             if(size(find(complement == i) > 0))
-                output = (1 - sccomplement(zout(varargin{i}, phi))).*output;
+                output = (zout(varargin{i}, phi)).*output;
             else
                 output = (1 - zout(varargin{i}, phi)).*output;
             end
